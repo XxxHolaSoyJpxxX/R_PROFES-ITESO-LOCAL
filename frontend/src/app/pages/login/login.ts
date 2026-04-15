@@ -1,19 +1,21 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, AfterViewInit } from '@angular/core'; // 1. Import AfterViewInit
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Token } from '../../shared/services/token';
 import { environment } from '../../../environments/environment';
 
 declare const google: any;
+
 @Component({
   selector: 'app-login',
   imports: [],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login {
+export class Login implements AfterViewInit { // 2. Add implements AfterViewInit
 
   googleClientId = environment.googleClientId;
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -21,21 +23,29 @@ export class Login {
     private tokenService: Token
   ) { }
 
-  ngOnInit() {
-
+  // 3. Change ngOnInit to ngAfterViewInit
+  ngAfterViewInit() { 
     if (this.tokenService.hasToken()) {
       this.router.navigate(['/home']);
       return;
     }
+    
+    // It's a good practice to use your environment variable here instead of the hardcoded string
     google.accounts.id.initialize({
-      client_id: '152305242233-4de38h7c2g1m6jm2tl908c1o8hkua75g.apps.googleusercontent.com',
+      client_id: this.googleClientId, 
       callback: (response: any) => this.handleCredential(response)
     });
 
-    google.accounts.id.renderButton(
-      document.getElementById("googleBtn"),
-      { theme: "filled_blue", size: "large" }
-    );
+    const googleBtnContainer = document.getElementById("googleBtn");
+    
+    if (googleBtnContainer) {
+      google.accounts.id.renderButton(
+        googleBtnContainer,
+        { theme: "filled_blue", size: "large" }
+      );
+    } else {
+      console.error("Could not find the Google Button container in the DOM!");
+    }
   }
 
   handleCredential(response: any) {

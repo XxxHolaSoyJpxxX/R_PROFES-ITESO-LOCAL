@@ -96,8 +96,9 @@ CREATE TABLE IF NOT EXISTS cursos_profesores (
     CONSTRAINT cursos_profesores_periodo_foreign FOREIGN KEY (periodo) REFERENCES periodo (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE INDEX IF NOT EXISTS cursos_profesores_profesor_index ON cursos_profesores (profesor_expediente);
-CREATE INDEX IF NOT EXISTS cursos_profesores_curso_index ON cursos_profesores (curso_id);
+-- REMOVED "IF NOT EXISTS" HERE
+CREATE INDEX cursos_profesores_profesor_index ON cursos_profesores (profesor_expediente);
+CREATE INDEX cursos_profesores_curso_index ON cursos_profesores (curso_id);
 
 CREATE TABLE IF NOT EXISTS cursos_carreras (
     id CHAR(36) NOT NULL,
@@ -119,4 +120,5 @@ CREATE TABLE IF NOT EXISTS curso_profesor_alumno (
     CONSTRAINT cpa_alumno_foreign FOREIGN KEY (alumno_id) REFERENCES alumnos (expediente)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE INDEX IF NOT EXISTS cpa_alumno_index ON curso_profesor_alumno (alumno_id);
+-- REMOVED "IF NOT EXISTS" HERE
+CREATE INDEX cpa_alumno_index ON curso_profesor_alumno (alumno_id);

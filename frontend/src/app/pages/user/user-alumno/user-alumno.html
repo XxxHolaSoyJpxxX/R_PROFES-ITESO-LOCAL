@@ -1,0 +1,83 @@
+<div class="user-page">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <p>Cargando información del alumno...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Contenido del perfil -->
+  <div *ngIf="!loading && alumno" class="content-container">
+    
+    <main class="main-content">
+      <!-- Perfil del Alumno -->
+      <section class="profile">
+        <img [src]="alumno.imagen || 'assets/images/Iteso.jpg'" alt="Foto" class="avatar" />
+        <div class="info">
+          <h2>{{ getNombreCompleto() }}</h2>
+          <p><strong>Expediente:</strong> {{ alumno.expediente }}</p>
+          <p><strong>Rol:</strong> Estudiante</p>
+          <p *ngIf="alumno.email"><strong>Email:</strong> {{ alumno.email }}</p>
+          <p *ngIf="alumno.carrera && alumno.carrera.nombre">
+            <strong>Carrera:</strong> {{ alumno.carrera.nombre }}
+          </p>
+         <!-- <button class="btn-edit" (click)="editarPerfil()">Editar Perfil</button>-->
+        </div>
+      </section>
+
+      <!-- Evaluaciones Finales -->
+      <section class="evaluaciones" *ngIf="evaluaciones && evaluaciones.length">
+        <h3>Evaluaciones Finales</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Curso</th>
+              <th>Calificación</th>
+              <th>Comentario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ev of evaluaciones">
+              <td>{{ ev.curso_nombre || ev.curso || ev.nombre }}</td>
+              <td>{{ ev.calificacion ?? ev.nota ?? '-' }}</td>
+              <td>{{ ev.comentario || ev.observaciones || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Sidebar de Cursos Inscritos -->
+    <aside class="sidebar-cursos" *ngIf="cursos && cursos.length">
+      <h3>Cursos Inscritos</h3>
+      <ul class="course-list">
+        <li *ngFor="let curso of cursos" [ngClass]="{'course-inactive': curso.activo == 0}">
+          
+          <div class="course-details">
+            <strong>{{ curso.curso_profesor_id.curso_id.nombre }}</strong>
+            <small *ngIf="curso.curso_profesor_id">{{ curso.curso_profesor_id.profesor_expediente.nombre }}</small>
+            <small *ngIf="curso.calificacion">Calificación: {{ curso.calificacion }}</small>
+          </div>
+
+          <button 
+            [disabled]="curso.activo == 0" 
+            [ngClass]="{
+              'btn-evaluar-activo': curso.activo == 1,
+              'btn-evaluar-inactivo': curso.activo == 0
+            }"
+            (click)="curso.activo == 1 ? evaluarCurso(curso.id) : null"
+          >
+            {{ curso.activo == 1 ? 'Evaluar' : 'Evaluado' }}
+          </button>
+
+        </li>
+      </ul>
+    </aside>
+  </div>
+
+  <!-- Sin datos -->
+  <div *ngIf="!loading && !alumno && !error" class="no-data">
+    No se encontró información del alumno.
+  </div>
+</div>

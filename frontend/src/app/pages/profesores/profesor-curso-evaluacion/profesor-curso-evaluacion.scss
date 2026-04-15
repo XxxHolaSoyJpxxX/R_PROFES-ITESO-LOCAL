@@ -1,0 +1,453 @@
+$iteso-blue: #00467F;
+$iteso-dark: #002d5a;
+$hover-bg: #f0f4f8;
+
+.page-container {
+  padding: 2rem 5%;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.back-btn {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #555;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+  
+  &:hover { 
+    background-color: $iteso-blue;
+    color: white;
+    border-color: $iteso-blue;
+  }
+}
+
+.evaluacion-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.curso-header {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+
+  .curso-info {
+    flex: 1;
+
+    .curso-nombre {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.8rem;
+      color: $iteso-dark;
+      font-weight: 700;
+    }
+
+    .profesor-nombre {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .periodo {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #999;
+    }
+  }
+
+  .rating-summary {
+    text-align: center;
+    padding: 1rem;
+    background: $hover-bg;
+    border-radius: 12px;
+    min-width: 200px;
+
+    .rating-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+
+      .rating-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: $iteso-blue;
+      }
+
+      .stars {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .star {
+          font-size: 20px;
+          color: #ddd;
+
+          &.filled {
+            color: #ffc107;
+          }
+        }
+      }
+    }
+
+    .total-evaluaciones {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+}
+
+.distribucion-card, .categorias-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .section-title {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.3rem;
+    color: $iteso-dark;
+    font-weight: 600;
+  }
+}
+
+.distribucion-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .bar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .star-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 60px;
+      font-size: 0.9rem;
+      color: #666;
+
+      .star-icon {
+        font-size: 18px;
+        color: #ffc107;
+      }
+    }
+
+    .bar-container {
+      flex: 1;
+      height: 24px;
+      background: #f0f0f0;
+      border-radius: 12px;
+      overflow: hidden;
+
+      .bar-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+
+        &.bar-5 { background: #4caf50; }
+        &.bar-4 { background: #8bc34a; }
+        &.bar-3 { background: #ffc107; }
+        &.bar-2 { background: #ff9800; }
+        &.bar-1 { background: #f44336; }
+      }
+    }
+
+    .bar-count {
+      min-width: 40px;
+      text-align: right;
+      font-weight: 600;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+
+  .categoria-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+
+    .categoria-icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: $hover-bg;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .material-icons {
+        color: $iteso-blue;
+        font-size: 24px;
+      }
+    }
+
+    .categoria-info {
+      flex: 1;
+
+      .categoria-nombre {
+        margin: 0 0 8px 0;
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .categoria-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .rating-value {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $iteso-dark;
+        }
+
+        .mini-stars {
+          display: flex;
+          gap: 1px;
+
+          .mini-star {
+            font-size: 14px;
+            color: #ddd;
+
+            &.filled {
+              color: #ffc107;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.comentarios-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .comentarios-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .section-title {
+      margin: 0;
+      font-size: 1.3rem;
+      color: $iteso-dark;
+      font-weight: 600;
+    }
+
+    .filtros {
+      display: flex;
+      gap: 10px;
+
+      .filtro-select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: #555;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.2s;
+
+        &:hover, &:focus {
+          border-color: $iteso-blue;
+          outline: none;
+        }
+      }
+    }
+  }
+
+  .comentarios-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .comentario-card {
+    padding: 1.5rem;
+    background: $hover-bg;
+    border-radius: 8px;
+    border-left: 3px solid $iteso-blue;
+
+    .comentario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+
+      .estudiante-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .estudiante-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, $iteso-blue, #0066b3);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .estudiante-nombre {
+          margin: 0;
+          font-weight: 600;
+          color: $iteso-dark;
+          font-size: 0.95rem;
+        }
+
+        .comentario-fecha {
+          margin: 2px 0 0 0;
+          font-size: 0.8rem;
+          color: #999;
+        }
+      }
+
+      .comentario-rating {
+        display: flex;
+        gap: 2px;
+
+        .star {
+          font-size: 18px;
+          color: #ddd;
+
+          &.filled {
+            color: #ffc107;
+          }
+        }
+      }
+    }
+
+    .comentario-texto {
+      margin: 0 0 1rem 0;
+      line-height: 1.6;
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .comentario-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .periodo-badge {
+        padding: 4px 12px;
+        background: white;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        color: $iteso-blue;
+        font-weight: 600;
+      }
+
+      .helpful-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #666;
+        font-size: 0.85rem;
+        transition: color 0.2s;
+
+        &:hover {
+          color: $iteso-blue;
+        }
+
+        .material-icons {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .no-comentarios {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+    font-style: italic;
+  }
+}
+
+.msg-box {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-style: italic;
+
+  &.error {
+    color: #c33;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem 3%;
+  }
+
+  .curso-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .rating-summary {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+
+  .categorias-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .comentarios-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .filtros {
+      width: 100%;
+      flex-direction: column;
+
+      .filtro-select {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,181 @@
+$iteso-blue: #00467F;
+$iteso-dark: #002d5a;
+$hover-bg: #f0f4f8;
+
+.page-container {
+  padding: 2rem 5%;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.title {
+  color: $iteso-dark;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0 0;
+}
+
+.back-btn {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #555;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  
+  &:hover { 
+    background-color: $iteso-blue;
+    color: white;
+    border-color: $iteso-blue;
+  }
+}
+
+.profesores-list-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 10px; 
+  max-width: 900px; 
+  margin: 0 auto; 
+}
+
+.profesor-tile {
+  background: white;
+  border-radius: 8px; 
+  padding: 15px 20px;
+  display: flex; 
+  align-items: center; 
+  gap: 20px; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-left: 4px solid transparent; 
+
+  &:hover {
+    transform: translateX(5px); 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-left-color: $iteso-blue; 
+  }
+}
+
+.tile-leading {
+  flex-shrink: 0; 
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+  }
+}
+
+.tile-content {
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .profesor-name {
+    margin: 0;
+    font-size: 1.1rem;
+    color: $iteso-dark;
+    font-weight: 600;
+  }
+
+  .profesor-email {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .tile-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      
+      &.nombre {
+        background-color: #e3f2fd;
+        color: $iteso-blue;
+      }
+      
+      &.apellidos {
+        background-color: #f5f5f5;
+        color: #555;
+      }
+    }
+  }
+}
+
+.tile-trailing {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-align: right;
+
+  .meta-info {
+    display: flex;
+    flex-direction: column;
+    
+    small {
+      font-size: 0.75rem;
+      color: #999;
+    }
+  }
+
+  .arrow-icon {
+    color: #ccc;
+  }
+}
+
+.msg-box {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-style: italic;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem 3%;
+  }
+
+  .profesor-tile {
+    padding: 12px 15px;
+    gap: 15px;
+
+    &:hover {
+      transform: translateX(3px);
+    }
+  }
+
+  .tile-leading .avatar {
+    width: 45px;
+    height: 45px;
+  }
+
+  .tile-content {
+    .profesor-name {
+      font-size: 1rem;
+    }
+
+    .profesor-email {
+      font-size: 0.85rem;
+    }
+  }
+
+  .tile-trailing {
+    gap: 10px;
+  }
+}

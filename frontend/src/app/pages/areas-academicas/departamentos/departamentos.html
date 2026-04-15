@@ -1,0 +1,24 @@
+<div class="list-container">
+    <ul class="dept-list">
+        <li *ngFor="let dep of filtered" 
+            class="dept-item-container" 
+            [class.expanded]="dep.id === selectedForDetails?.id"
+        >
+            <div class="dept-item" [class.active]="dep.id === selectedForDetails?.id">
+                <span class="dept-name" (click)="goToCursos(dep)">
+                    {{ dep.nombre }}
+                </span>
+                
+                <button class="toggle-btn" (click)="toggleDescription(dep)">
+                    {{ dep.id === selectedForDetails?.id ? '▲' : '▼' }}
+                </button>
+            </div>
+
+            <div class="dept-description-panel" *ngIf="dep.id === selectedForDetails?.id">
+                <h4>Descripción:</h4> 
+                <p>{{ dep.descripcion }}</p>
+            </div>
+        </li>
+    </ul>
+
+    </div>

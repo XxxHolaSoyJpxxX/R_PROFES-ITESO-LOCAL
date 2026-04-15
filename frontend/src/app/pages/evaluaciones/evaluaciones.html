@@ -1,0 +1,149 @@
+<div class="page-container">
+  
+  <h1 class="page-title">Evaluación de Profesor/Curso</h1>
+
+  <div *ngIf="isLoading" class="msg-box">
+    <p>Cargando información...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="msg-box error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && inscripcionInfo" class="evaluacion-container">
+
+  
+
+    <div class="progress-indicator">
+      <div 
+        class="progress-step" 
+        *ngFor="let section of [1, 2, 3]"
+        [class.active]="section === currentSection"
+        [class.completed]="section < currentSection"
+      >
+        <div class="step-number">{{ section }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="currentSection === 1" class="section-container">
+      <div class="section-header">
+        <h2 class="section-title">Interacción y Evaluación General del Profesor</h2>
+        <p class="section-subtitle">Sección 1 de 3</p>
+      </div>
+
+      <div class="questions-container">
+        <div class="question-item" *ngFor="let pregunta of seccion1Preguntas">
+          <p class="question-text">{{ pregunta.texto }}</p>
+          <div class="rating-scale">
+            <span class="scale-label">1</span>
+            <div class="rating-buttons">
+              <button 
+                *ngFor="let value of [1, 2, 3, 4, 5]"
+                class="rating-btn"
+                [class.selected]="getRating(pregunta.key) === value"
+                (click)="setRating(pregunta.key, value)"
+              >
+              </button>
+            </div>
+            <span class="scale-label">5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation-buttons">
+        <button class="btn-primary" [disabled]="!canGoNext()" (click)="nextSection()">
+          Siguiente
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="currentSection === 2" class="section-container">
+      <div class="section-header">
+        <h2 class="section-title">Claridad y Explicación del Profesor</h2>
+        <p class="section-subtitle">Sección 2 de 3</p>
+      </div>
+
+      <div class="questions-container">
+        <div class="question-item" *ngFor="let pregunta of seccion2Preguntas">
+          <p class="question-text">{{ pregunta.texto }}</p>
+          <div class="rating-scale">
+            <span class="scale-label">1</span>
+            <div class="rating-buttons">
+              <button 
+                *ngFor="let value of [1, 2, 3, 4, 5]"
+                class="rating-btn"
+                [class.selected]="getRating(pregunta.key) === value"
+                (click)="setRating(pregunta.key, value)"
+              >
+              </button>
+            </div>
+            <span class="scale-label">5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation-buttons">
+        <button class="btn-secondary" (click)="previousSection()">
+          Anterior
+        </button>
+        <button class="btn-primary" [disabled]="!canGoNext()" (click)="nextSection()">
+          Siguiente
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="currentSection === 3" class="section-container">
+      <div class="section-header">
+        <h2 class="section-title">Estilo y Personalidad del Profesor</h2>
+        <p class="section-subtitle">Sección 3 de 3</p>
+      </div>
+
+<div class="questions-container seccion-gris-ovalada">
+  <div class="question-item" *ngFor="let pregunta of seccion3Preguntas">
+    <p class="question-text">{{ pregunta.texto }}</p>
+    <div class="rating-scale-custom">
+      <span class="scale-label-custom">{{ pregunta.labels.min }}</span>
+      <div class="rating-buttons">
+        <button 
+          *ngFor="let value of [1, 2, 3, 4, 5]"
+          class="rating-btn"
+          [class.selected]="getRating(pregunta.key) === value"
+          (click)="setRating(pregunta.key, value)"
+        >
+          {{ value }}
+        </button>
+      </div>
+      <span class="scale-label-custom">{{ pregunta.labels.max }}</span>
+    </div>
+  </div>
+</div>
+
+
+        <div class="comentarios-section">
+          <label class="comentarios-label">Comentarios sobre el profesor</label>
+          <textarea 
+            [(ngModel)]="formData.comentario"
+            class="comentarios-textarea"
+            placeholder="Escribe tus comentarios aquí..."
+            maxlength="3000"
+          ></textarea>
+          <p class="char-counter">{{ getRemainingChars() }} de 3000 caracteres disponibles.</p>
+        </div>
+      </div>
+
+      <div class="navigation-buttons" *ngIf="canSubmit()">
+        <button class="btn-secondary" (click)="previousSection()">
+          Anterior
+        </button>
+        <button 
+          class="btn-primary" 
+          [disabled]="!canGoNext() || isSubmitting" 
+          (click)="submitEvaluacion()"
+        >
+          {{ isSubmitting ? 'Enviando...' : 'Enviar' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+

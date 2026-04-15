@@ -1,0 +1,51 @@
+<div class="page-container">
+  
+  <div *ngIf="isLoading" class="msg-box">
+    <p>Cargando lista de profesores...</p>
+  </div>
+
+  <div *ngIf="!isLoading && profesores.length === 0" class="msg-box">
+    <p>No hay profesores asignados para este curso.</p>
+  </div>
+
+  <div *ngIf="!isLoading && profesores.length > 0" class="profesores-list-container">
+    
+    <div 
+      class="profesor-tile" 
+      *ngFor="let profesor of profesores"
+      (click)="goToProfesor(profesor.expediente)"
+    >
+      
+      <div class="tile-leading">
+        <img 
+          [src]="profesor.profesorImagen" 
+          (error)="profesor.profesorImagen = '/assets/images/default-avatar.png'"
+          alt="Foto de {{ profesor.nombreCompleto }}" 
+          class="avatar"
+        >
+      </div>
+
+      <div class="tile-content">
+        <h3 class="profesor-name">{{ profesor.nombreCompleto }}</h3>
+        <p class="profesor-email">{{ profesor.email }}</p>
+        <p class="profesor-email">{{profesor.periodo.name}}</p>
+        
+        <div class="tile-badges">
+          <span class="badge nombre">{{ profesor.nombre }}</span>
+          <span class="badge apellidos">
+            {{ profesor.apellido_paterno }} {{ profesor.apellido_materno }}
+          </span>
+        </div>
+      </div>
+
+      <div class="tile-trailing">
+        <div class="meta-info">
+          <small>Exp: {{ profesor.expediente }}</small>
+        </div>
+        <span class="material-icons arrow-icon">chevron_right</span>
+      </div>
+
+    </div>
+
+  </div>
+</div>

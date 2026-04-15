@@ -1,0 +1,186 @@
+$iteso-blue: #00467F; 
+$iteso-dark: #002d5a;
+$card-border-radius: 12px;
+
+// --- Contenedor Principal y Layout ---
+
+.page-container {
+    background: #f7f7f7;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+
+    /* 🚀 CENTRADO HORIZONTAL Y EMPUJE VERTICAL */
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: flex-start; /* Alineación superior para empujar desde arriba */
+    
+    /* 💡 Empuje hacia abajo: Ajusta el 10vh para subir o bajar el contenido */
+    padding-top: 10vh; 
+}
+
+.main-layout {
+    display: flex;
+    gap: 2rem;
+    
+    /* El padding global de la página */
+    padding: 0 2rem 2rem 2rem; 
+    
+    /* Alineación de columnas internas (cards y sidebar) */
+    align-items: flex-start; 
+    
+    max-width: 1400px; 
+    width: 95%;
+    margin: 0; /* Quitar cualquier margen que afecte el centrado */
+}
+
+.left {
+    flex: 1;
+    align-self: flex-start;
+}
+
+.title {
+    color: $iteso-dark;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+// --- Grid de Tarjetas ---
+
+.grid {
+    display: grid;
+    gap: 1.5rem; 
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    width: 100%;
+}
+
+// --- Estilos de la Tarjeta (.card) ---
+
+.card {
+    background: white;
+    padding: 1rem;
+    border-radius: $card-border-radius;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.card-img {
+    width: 100%;
+    height: 140px; 
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $iteso-dark;
+    margin: 0;
+}
+
+// --- Barra Lateral (.sidebar) ---
+
+.sidebar {
+    width: 320px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    
+    align-self: flex-start; 
+}
+
+.sidebar h2 {
+    color: $iteso-dark;
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.sidebar-img {
+    width: 100%;
+    height: 160px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+// --- Estilos de Componentes Hijos (app-departamentos) ---
+
+app-departamentos .list-container {
+    padding: 0;
+}
+
+app-departamentos .dept-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+app-departamentos .dept-item {
+    background-color: #6a95c4; 
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 20px;
+    
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: center;
+
+    &:hover {
+        background-color: #58799c;
+    }
+}
+
+// --- Otros Estilos Originales (Filtros, Botones) ---
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+
+    input,
+    select {
+        padding: 0.5rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .clear-btn {
+        background: #ddd;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+}
+
+button {
+    &.Areabutton {
+        background-color: $iteso-blue;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 12px;
+        transition: background-color 0.2s ease;
+    }
+}

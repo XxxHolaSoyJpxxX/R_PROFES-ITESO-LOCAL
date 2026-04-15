@@ -1,0 +1,246 @@
+<div class="page-container">
+  
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="msg-box">
+    <p>Cargando evaluación...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !isLoading" class="msg-box error">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Evaluación del curso -->
+  <div *ngIf="!isLoading && evaluacion" class="evaluacion-container">
+    
+    <!-- Header del curso -->
+    <div class="curso-header">
+      <div class="curso-info">
+        <h1 class="curso-nombre">{{ evaluacion.cursoNombre }}</h1>
+        <p class="profesor-nombre">{{ evaluacion.profesorNombre }}</p>
+        <p class="periodo">{{ evaluacion.periodo }}</p>
+      </div>
+      
+      <div class="rating-summary">
+        <div class="rating-main">
+          <span class="rating-number">{{ evaluacion.calificacionPromedio.toFixed(1) }}</span>
+          <div class="stars">
+            <span 
+              *ngFor="let filled of getRatingStars(evaluacion.calificacionPromedio)" 
+              class="material-icons star"
+              [class.filled]="filled"
+            >
+              {{ filled ? 'star' : 'star_border' }}
+            </span>
+          </div>
+        </div>
+        <p class="total-evaluaciones">{{ evaluacion.totalEvaluaciones }} evaluaciones</p>
+      </div>
+    </div>
+
+    <!-- Distribución de calificaciones -->
+    <div class="distribucion-card">
+      <h2 class="section-title">Distribución de Calificaciones</h2>
+      
+      <div class="distribucion-bars">
+        <div class="bar-item" *ngFor="let star of [5, 4, 3, 2, 1]">
+          <div class="star-label">
+            <span class="material-icons star-icon">star</span>
+            <span>{{ star }}</span>
+          </div>
+          <div class="bar-container">
+            <div 
+              class="bar-fill" 
+              [style.width.%]="getBarWidth(evaluacion.distribucionCalificaciones[star], evaluacion.totalEvaluaciones)"
+              [class.bar-5]="star === 5"
+              [class.bar-4]="star === 4"
+              [class.bar-3]="star === 3"
+              [class.bar-2]="star === 2"
+              [class.bar-1]="star === 1"
+            ></div>
+          </div>
+          <span class="bar-count">{{ evaluacion.distribucionCalificaciones[star] }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorías de evaluación -->
+    <div class="categorias-card">
+      <h2 class="section-title">Evaluación por Categorías</h2>
+      
+      <div class="categorias-grid">
+        <div class="categoria-item">
+          <div class="categoria-icon">
+            <span class="material-icons">psychology</span>
+          </div>
+          <div class="categoria-info">
+            <p class="categoria-nombre">Dominio del tema</p>
+            <div class="categoria-rating">
+              <span class="rating-value">{{ evaluacion.categorias.dominio.toFixed(1) }}</span>
+              <div class="mini-stars">
+                <span 
+                  *ngFor="let filled of getRatingStars(evaluacion.categorias.dominio)" 
+                  class="material-icons mini-star"
+                  [class.filled]="filled"
+                >
+                  {{ filled ? 'star' : 'star_border' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="categoria-item">
+          <div class="categoria-icon">
+            <span class="material-icons">visibility</span>
+          </div>
+          <div class="categoria-info">
+            <p class="categoria-nombre">Claridad</p>
+            <div class="categoria-rating">
+              <span class="rating-value">{{ evaluacion.categorias.claridad.toFixed(1) }}</span>
+              <div class="mini-stars">
+                <span 
+                  *ngFor="let filled of getRatingStars(evaluacion.categorias.claridad)" 
+                  class="material-icons mini-star"
+                  [class.filled]="filled"
+                >
+                  {{ filled ? 'star' : 'star_border' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="categoria-item">
+          <div class="categoria-icon">
+            <span class="material-icons">schedule</span>
+          </div>
+          <div class="categoria-info">
+            <p class="categoria-nombre">Disponibilidad</p>
+            <div class="categoria-rating">
+              <span class="rating-value">{{ evaluacion.categorias.disponibilidad.toFixed(1) }}</span>
+              <div class="mini-stars">
+                <span 
+                  *ngFor="let filled of getRatingStars(evaluacion.categorias.disponibilidad)" 
+                  class="material-icons mini-star"
+                  [class.filled]="filled"
+                >
+                  {{ filled ? 'star' : 'star_border' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="categoria-item">
+          <div class="categoria-icon">
+            <span class="material-icons">menu_book</span>
+          </div>
+          <div class="categoria-info">
+            <p class="categoria-nombre">Material didáctico</p>
+            <div class="categoria-rating">
+              <span class="rating-value">{{ evaluacion.categorias.material.toFixed(1) }}</span>
+              <div class="mini-stars">
+                <span 
+                  *ngFor="let filled of getRatingStars(evaluacion.categorias.material)" 
+                  class="material-icons mini-star"
+                  [class.filled]="filled"
+                >
+                  {{ filled ? 'star' : 'star_border' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="categoria-item">
+          <div class="categoria-icon">
+            <span class="material-icons">assignment</span>
+          </div>
+          <div class="categoria-info">
+            <p class="categoria-nombre">Sistema de evaluación</p>
+            <div class="categoria-rating">
+              <span class="rating-value">{{ evaluacion.categorias.evaluacion.toFixed(1) }}</span>
+              <div class="mini-stars">
+                <span 
+                  *ngFor="let filled of getRatingStars(evaluacion.categorias.evaluacion)" 
+                  class="material-icons mini-star"
+                  [class.filled]="filled"
+                >
+                  {{ filled ? 'star' : 'star_border' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comentarios -->
+    <div class="comentarios-section">
+      <div class="comentarios-header">
+        <h2 class="section-title">Comentarios de Estudiantes</h2>
+        
+        <div class="filtros">
+          <select [(ngModel)]="filtroCalificacion" (change)="onFiltroChange()" class="filtro-select">
+            <option value="todas">Todas las calificaciones</option>
+            <option value="5">5 estrellas</option>
+            <option value="4">4 estrellas</option>
+            <option value="3">3 estrellas</option>
+            <option value="2">2 estrellas</option>
+            <option value="1">1 estrella</option>
+          </select>
+
+          <select [(ngModel)]="ordenComentarios" (change)="onFiltroChange()" class="filtro-select">
+            <option value="recientes">Más recientes</option>
+            <option value="antiguos">Más antiguos</option>
+            <option value="mejores">Mejor valorados</option>
+            <option value="peores">Peor valorados</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="comentarios-list">
+        <div class="comentario-card" *ngFor="let comentario of comentarios">
+          <div class="comentario-header">
+            <div class="estudiante-info">
+              <div class="estudiante-avatar">
+                {{ comentario.estudianteNombre.substring(0, 2).toUpperCase() }}
+              </div>
+              <div>
+                <p class="estudiante-nombre">{{ comentario.estudianteNombre }}</p>
+                <p class="comentario-fecha">{{ formatDate(comentario.fecha) }}</p>
+              </div>
+            </div>
+            
+            <div class="comentario-rating">
+              <span 
+                *ngFor="let filled of getRatingStars(comentario.calificacion)" 
+                class="material-icons star"
+                [class.filled]="filled"
+              >
+                {{ filled ? 'star' : 'star_border' }}
+              </span>
+            </div>
+          </div>
+
+          <p class="comentario-texto">{{ comentario.comentario }}</p>
+
+          <div class="comentario-footer">
+            <span class="periodo-badge">{{ comentario.periodo }}</span>
+            <button class="helpful-btn" *ngIf="comentario.helpful">
+              <span class="material-icons">thumb_up</span>
+              <span>{{ comentario.helpful }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="comentarios.length === 0" class="no-comentarios">
+          <p>No hay comentarios que coincidan con los filtros seleccionados.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

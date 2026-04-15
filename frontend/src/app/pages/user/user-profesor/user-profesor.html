@@ -1,0 +1,237 @@
+<div class="user-page">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <p>Cargando información del profesor...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Contenido del perfil -->
+  <div *ngIf="!loading && profesor" class="content-container">
+    
+    <main class="main-content">
+      <!-- Perfil del Profesor -->
+      <section class="profile">
+        <div class="avatar-container">
+          <img 
+            *ngIf="profesor.imagen" 
+            [src]="profesor.imagen" 
+            [alt]="getNombreCompleto()"
+            (error)="profesor.imagen = null"
+            class="avatar"
+          />
+          <div *ngIf="!profesor.imagen" class="avatar-placeholder">
+            {{ getInitials() }}
+          </div>
+        </div>
+        
+        <div class="info">
+          <h2>{{ getNombreCompleto() }}</h2>
+          <p class="titulo-profesor">{{ profesor.titulo || 'Profesor' }}</p>
+          <p><strong>Expediente:</strong> {{ profesor.expediente }}</p>
+          <p><strong>Rol:</strong> Profesor</p>
+          <p *ngIf="profesor.email"><strong>Email:</strong> {{ profesor.email }}</p>
+          <p *ngIf="profesor.telefono"><strong>Teléfono:</strong> {{ profesor.telefono }}</p>
+          <p *ngIf="profesor.departamento">
+            <strong>Departamento:</strong> {{ profesor.departamento }}
+          </p>
+          
+          <!-- Calificación General -->
+          <div class="rating-badge" *ngIf="profesor.calificacionGeneral">
+            <span class="material-icons star-icon">star</span>
+            <span class="rating-value">{{ profesor.calificacionGeneral }}</span>
+            <span class="rating-text">({{ profesor.totalEvaluaciones || 0 }} evaluaciones)</span>
+          </div>
+          
+          <div class="action-buttons">
+            <button class="btn-upload-resource" (click)="openUploadModal()" title="Subir recursos">
+              <span class="material-icons">add</span>
+              Subir Recurso
+            </button>
+            <button class="btn-secondary" (click)="verEstadisticas()">Ver Estadísticas</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formación Académica -->
+      <section class="info-academica" *ngIf="profesor.formacionAcademica && profesor.formacionAcademica.length">
+        <h3>Formación Académica</h3>
+        <div class="formacion-list">
+          <div class="formacion-item" *ngFor="let estudio of profesor.formacionAcademica">
+            <h4>{{ estudio.grado }}</h4>
+            <p class="institucion">{{ estudio.institucion }}</p>
+            <p class="anio" *ngIf="estudio.anio">{{ estudio.anio }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Áreas de Especialización -->
+      <section class="areas-especializacion" *ngIf="profesor.areasEspecializacion && profesor.areasEspecializacion.length">
+        <h3>Áreas de Especialización</h3>
+        <div class="tags">
+          <span class="tag" *ngFor="let area of profesor.areasEspecializacion">
+            {{ area }}
+          </span>
+        </div>
+      </section>
+
+      <!-- Publicaciones -->
+      <section class="publicaciones" *ngIf="profesor.publicaciones && profesor.publicaciones.length">
+        <h3>Publicaciones Recientes</h3>
+        <div class="publicacion-list">
+          <div class="publicacion-item" *ngFor="let pub of profesor.publicaciones">
+            <h4>{{ pub.titulo }}</h4>
+            <p class="revista">{{ pub.revista }} - {{ pub.anio }}</p>
+            <p class="autores" *ngIf="pub.autores">{{ pub.autores }}</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sidebar de Cursos que Imparte -->
+    <aside class="sidebar-cursos">
+      <h3>Cursos que Imparto</h3>
+      
+      <div *ngIf="!cursosImpartidos || cursosImpartidos.length === 0" class="no-cursos">
+        <p>No hay cursos asignados actualmente</p>
+      </div>
+
+      <ul class="course-list" *ngIf="cursosImpartidos && cursosImpartidos.length">
+        <li *ngFor="let curso of cursosImpartidos">
+          
+          <div class="course-details">
+            <strong>{{ curso.cursoNombre }}</strong>
+            <small class="periodo">{{ curso.periodo }}</small>
+            <small *ngIf="curso.creditos">Créditos: {{ curso.creditos }}</small>
+            
+            <div class="curso-stats" *ngIf="curso.calificacion">
+              <span class="material-icons mini-star">star</span>
+              <span>{{ curso.calificacion }}</span>
+            </div>
+          </div>
+
+          <button 
+            class="btn-ver-curso"
+            (click)="verCursoDetalle(curso.cursoId)"
+          >
+            Ver Detalle
+          </button>
+
+        </li>
+      </ul>
+
+      <h3>Recursos</h3>
+      <div class="section" *ngIf="recursos && recursos.length > 0">
+          <div class="section-content">
+            <div class="recursos-list">
+              <div class="recurso-item" *ngFor="let recurso of recursos">
+                <a [href]="recurso.signedUrl" target="_blank" class="recurso-link">
+                  <span class="material-icons icon-file">description</span>
+                  <span class="nombre-archivo">{{ recurso.titulo }}</span>
+                </a>
+                <span class="fecha-subida" *ngIf="recurso.fecha_subida">
+                   {{ recurso.fecha_subida | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+            </div>
+            </div>
+        </div>
+    </aside>
+  </div>
+
+  <!-- Sin datos -->
+  <div *ngIf="!loading && !profesor && !error" class="no-data">
+    No se encontró información del profesor.
+  </div>
+</div>
+
+<!-- Modal de Upload de Archivo -->
+<div class="modal-overlay" *ngIf="showUploadModal" (click)="closeUploadModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Subir Recurso</h3>
+      <button class="close-btn" (click)="closeUploadModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Input oculto -->
+      <input 
+        #fileInput 
+        type="file" 
+        (change)="onFileSelected(fileInput)" 
+        style="display: none;"
+      />
+
+      <!-- Zona de drop o info del archivo -->
+      <div 
+        *ngIf="!selectedFile"
+        class="dropzone"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="triggerFileInput(fileInput)"
+        [ngClass]="{ 'dragging': isDragOver }"
+      >
+        <span class="material-icons upload-icon">cloud_upload</span>
+        <p class="upload-text">Arrastra un archivo aquí</p>
+        <p class="upload-subtext">o haz clic para seleccionar</p>
+        <small>Máximo 10MB - PDF, Word, Excel, Imágenes, etc.</small>
+      </div>
+
+      <!-- Vista del archivo seleccionado -->
+      <div *ngIf="selectedFile" class="file-preview">
+        <!-- Preview de imagen si aplica -->
+        <div *ngIf="previewUrl" class="image-preview-container">
+          <img [src]="previewUrl" alt="Preview" class="preview-image">
+        </div>
+
+        <!-- Card con info del archivo -->
+        <div class="file-card">
+          <div class="file-icon-container">
+            <span class="material-icons file-icon" [class.is-image]="previewUrl">
+              {{ getFileIcon() }}
+            </span>
+          </div>
+          
+          <div class="file-info">
+            <p class="file-name">{{ selectedFile.name }}</p>
+            <p class="file-size">{{ getFileSize() }}</p>
+          </div>
+
+          <button class="remove-file-btn" (click)="clearFile()">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+
+        <button class="change-file-btn" (click)="triggerFileInput(fileInput)">
+          <span class="material-icons">swap_horiz</span>
+          Cambiar archivo
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeUploadModal()" [disabled]="isUploadingFile">
+        Cancelar
+      </button>
+      <button 
+        class="btn-upload" 
+        (click)="uploadFile()" 
+        [disabled]="!selectedFile || isUploadingFile"
+      >
+        <span *ngIf="!isUploadingFile">
+          <span class="material-icons">upload</span>
+          Subir Archivo
+        </span>
+        <span *ngIf="isUploadingFile">Subiendo...</span>
+      </button>
+    </div>
+
+    
+
+  </div>
+
+</div>

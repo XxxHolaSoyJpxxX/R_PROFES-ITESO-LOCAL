@@ -1,0 +1,448 @@
+$iteso-blue: #00467F;
+$iteso-dark: #002d5a;
+$hover-bg: #f0f4f8;
+
+.page-container {
+  padding: 2rem 5%;
+  background: #f7f7f7;
+  min-height: 100vh;
+}
+
+.back-btn {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #555;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+  
+  &:hover { 
+    background-color: $iteso-blue;
+    color: white;
+    border-color: $iteso-blue;
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.perfil-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profesor-header {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+
+  .profesor-avatar-large {
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #f0f0f0;
+    }
+
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $iteso-blue, #0066b3);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 2.5rem;
+    }
+  }
+
+  .profesor-header-info {
+    flex: 1;
+
+    .profesor-nombre {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      color: $iteso-dark;
+      font-weight: 700;
+    }
+
+    .profesor-titulo {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .contacto-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      margin-bottom: 1.5rem;
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: #555;
+
+        .material-icons {
+          font-size: 18px;
+          color: $iteso-blue;
+        }
+      }
+    }
+
+    .rating-general {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1rem;
+      background: $hover-bg;
+      border-radius: 8px;
+      margin-top: 1rem;
+
+      .rating-value {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .rating-number {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: $iteso-blue;
+        }
+
+        .stars {
+          display: flex;
+          gap: 2px;
+
+          .star {
+            font-size: 24px;
+            color: #ddd;
+
+            &.filled {
+              color: #ffc107;
+            }
+          }
+        }
+      }
+
+      .rating-count {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+.info-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.3rem;
+    color: $iteso-dark;
+    font-weight: 600;
+
+    .material-icons {
+      color: $iteso-blue;
+      font-size: 26px;
+    }
+  }
+
+  .section-content {
+    .estudio-item, .publicacion-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      &:first-child {
+        padding-top: 0;
+      }
+
+      h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        color: $iteso-dark;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+        color: #666;
+
+        &.institucion, &.revista {
+          color: $iteso-blue;
+          font-weight: 500;
+        }
+
+        &.anio, &.autores {
+          color: #999;
+          font-size: 0.85rem;
+        }
+      }
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .tag {
+        padding: 6px 14px;
+        background: $hover-bg;
+        color: $iteso-blue;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    }
+
+    .biografia-text {
+      line-height: 1.7;
+      color: #555;
+      font-size: 1rem;
+      margin: 0;
+    }
+  }
+}
+
+.sidebar {
+  .sidebar-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 2rem;
+
+    .sidebar-title {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.2rem;
+      color: $iteso-dark;
+      font-weight: 600;
+    }
+
+    .no-cursos {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #999;
+      font-style: italic;
+
+      p {
+        margin: 0;
+      }
+    }
+
+    .cursos-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .curso-item {
+        padding: 12px;
+        background: $hover-bg;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+
+        &:hover {
+          background: darken($hover-bg, 3%);
+          border-left-color: $iteso-blue;
+          transform: translateX(3px);
+        }
+
+        .curso-info {
+          flex: 1;
+
+          h3 {
+            margin: 0 0 4px 0;
+            font-size: 0.95rem;
+            color: $iteso-dark;
+            font-weight: 600;
+          }
+
+          .periodo {
+            margin: 0 0 6px 0;
+            font-size: 0.8rem;
+            color: #777;
+          }
+
+          .curso-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            color: $iteso-blue;
+            font-weight: 600;
+
+            .star-icon {
+              font-size: 16px;
+              color: #ffc107;
+            }
+          }
+        }
+
+        .arrow {
+          color: #ccc;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}
+
+.msg-box {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-style: italic;
+
+  &.error {
+    color: #c33;
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .perfil-container {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar .sidebar-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem 3%;
+  }
+
+  .profesor-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .profesor-header-info {
+      .contacto-info {
+        justify-content: center;
+      }
+
+      .rating-general {
+        justify-content: center;
+      }
+    }
+  }
+
+  .section {
+    padding: 1rem 1.5rem;
+  }
+}
+
+.recursos-list {
+  display: flex;
+  flex-direction: column;
+
+  .recurso-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    .recurso-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.2s ease;
+      flex: 1;
+
+      &:hover {
+        color: $iteso-blue; // Usa tu variable de color existente
+
+        .icon-file {
+          transform: scale(1.1);
+        }
+      }
+
+      .icon-file {
+        color: $iteso-blue;
+        font-size: 24px;
+        transition: transform 0.2s;
+      }
+
+      .nombre-archivo {
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+    }
+
+    .fecha-subida {
+      font-size: 0.8rem;
+      color: #999;
+      margin-left: 1rem;
+    }
+  }
+}

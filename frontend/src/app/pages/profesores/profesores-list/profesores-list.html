@@ -1,0 +1,84 @@
+<div class="page-container">
+  
+  <div class="header">
+    <h1 class="title">Profesores</h1>
+    <p class="subtitle">{{ profesoresFiltrados.length }} profesores encontrados</p>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="search-container">
+    <div class="search-box">
+      <span class="material-icons search-icon">search</span>
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre, email o expediente..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        class="search-input"
+      >
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="msg-box">
+    <p>Cargando profesores...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && profesoresFiltrados.length === 0" class="msg-box">
+    <p>No se encontraron profesores.</p>
+  </div>
+
+  <!-- Lista de profesores -->
+  <div *ngIf="!isLoading && profesoresFiltrados.length > 0" class="profesores-list">
+    
+    <div 
+      class="profesor-item" 
+      *ngFor="let profesor of profesoresFiltrados"
+      (click)="goToProfesor(profesor.expediente)"
+    >
+      
+      <div class="profesor-avatar">
+        <img 
+          *ngIf="profesor.imagen" 
+          [src]="profesor.imagen" 
+          [alt]="profesor.nombreCompleto"
+          (error)="profesor.imagen = null"
+        >
+        <div *ngIf="!profesor.imagen" class="avatar-placeholder">
+          {{ getInitials(profesor.nombreCompleto) }}
+        </div>
+      </div>
+
+      <div class="profesor-info">
+        <h3 class="profesor-nombre">{{ profesor.nombreCompleto }}</h3>
+        <p class="profesor-email">{{ profesor.email }}</p>
+        <div class="profesor-meta">
+          <span class="meta-item">
+            <span class="material-icons">badge</span>
+            {{ profesor.expediente }}
+          </span>
+          <span class="meta-item" *ngIf="profesor.departamento">
+            <span class="material-icons">business</span>
+            {{ profesor.departamento }}
+          </span>
+        </div>
+      </div>
+
+      <div class="profesor-rating">
+        <div class="rating-value">
+          <span class="rating-number">{{ profesor.calificacionGeneral || 'N/A' }}</span>
+          <span class="material-icons star-icon" *ngIf="profesor.calificacionGeneral">star</span>
+        </div>
+        <p class="rating-label">Calificación</p>
+      </div>
+
+      <div class="profesor-arrow">
+        <span class="material-icons">chevron_right</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,75 @@
+/* Color ITESO personalizado */
+$iteso-blue: #00467F; // RGB(0, 70, 127)
+$iteso-light-blue: #00B5E2;
+
+.login-container {
+  min-height: 100vh;
+  background-color: $iteso-blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card-wrapper {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem 2rem;
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+
+  img {
+    height: 80px;
+    width: auto;
+  }
+}
+
+.login-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* TÍTULO */
+.title {
+  color: $iteso-blue; // actualizado al color nuevo
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+/* CONTENEDOR BOTÓN GOOGLE (mantiene centrado) */
+.google-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+/* SI USAS BOTÓN GOOGLE MANUAL (no Google One Tap) */
+.google-btn {
+  background-color: $iteso-blue;      // color nuevo
+  color: white;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s ease-in-out;
+
+
+}
+
+.google-text {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}

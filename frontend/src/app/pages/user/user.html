@@ -1,0 +1,15 @@
+ <div *ngIf="loading" class="loading-container">
+      <p>Cargando perfil...</p>
+    </div>
+
+    <div *ngIf="error" class="error-container">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Mostrar componente según rol -->
+    <app-user-alumno *ngIf="!loading && !error && userRole === 'ALUMNO'"></app-user-alumno>
+    <app-user-profesor *ngIf="!loading && !error && userRole === 'PROFESOR'"></app-user-profesor>
+
+    <div *ngIf="!loading && !error && !userRole" class="no-role">
+      <p>No se pudo determinar el rol del usuario.</p>
+</div>

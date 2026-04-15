@@ -1,0 +1,107 @@
+$blue-primary: #6a95c4;    // Azul principal de la píldora
+$blue-hover: #58799c;     // Azul al pasar el ratón / cabecera expandida
+$blue-active: #00467F;    // Azul Iteso para énfasis
+$iteso-dark: #002d5a;
+$details-bg: #e3f2fd;     // Fondo suave para el panel de detalles
+
+.list-container {
+    padding: 0;
+    margin: 0; 
+}
+
+.dept-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 🚀 Contenedor de cada Elemento (Card de Acordeón) */
+.dept-item-container {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 12px; /* Espacio entre los bloques de departamento */
+    border-radius: 8px; 
+    overflow: hidden; /* Importante para que los bordes redondeados se vean bien */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 1. Píldora/Cabecera (Visible siempre) --- */
+.dept-item {
+    background-color: $blue-primary;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    
+    padding: 10px 15px;
+    
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    /* Flexbox para separar el nombre y la flecha */
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    
+    border-radius: 20px; /* Bordes redondeados por defecto */
+}
+
+/* Ajustes de Bordes para el estado expandido */
+.dept-item-container.expanded .dept-item {
+    background-color: $blue-hover;
+    border-bottom-left-radius: 0; /* Quita los bordes si el panel de detalles está abierto */
+    border-bottom-right-radius: 0;
+}
+
+/* --- 1.1 Elementos internos de la Píldora --- */
+
+.dept-name {
+    /* Estilo para el texto del departamento (navegación) */
+    cursor: pointer;
+    flex-grow: 1; 
+    text-align: left;
+    margin-right: 10px; 
+}
+
+.toggle-btn {
+    /* Estilo para el botón de flecha */
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0 5px;
+    margin-left: 10px;
+    opacity: 0.8;
+    transition: opacity 0.2s, transform 0.2s;
+    line-height: 1;
+
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+/* --- 2. Panel de Descripción Desplegable --- */
+.dept-description-panel {
+    padding: 15px;
+    background-color: $details-bg; 
+    color: #333;
+    font-size: 0.9rem;
+    
+    /* Bordes del panel */
+    border: 1px solid #c2e0f4;
+    border-top: none; /* Se une con la cabecera */
+    border-bottom-left-radius: 8px; 
+    border-bottom-right-radius: 8px;
+    
+    h4 {
+        color: $iteso-dark;
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    
+    p {
+        margin: 0;
+    }
+}

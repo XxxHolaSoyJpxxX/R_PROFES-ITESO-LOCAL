@@ -1,0 +1,56 @@
+<div class="page-container">
+
+  <main class="main-layout">
+
+    <section class="left">
+      <div class="grid">
+
+        <div class="card" *ngFor="let curso of filteredCursos" (click)="selectCurso(curso)"
+          [class.selected]="curso.id === selectedCurso?.id">
+          <img class="card-img" [src]="curso.image" [alt]="'Imagen de ' + curso.nombre" />
+          <h3 class="card-title">{{ curso.nombre }}</h3>
+          <p class="card-subtitle">{{ curso.modalidadNombre }}</p>
+        </div>
+
+      </div>
+
+      <div *ngIf="filteredCursos.length === 0">
+        <p>No se encontraron cursos activos en este departamento.</p>
+      </div>
+    </section>
+
+    <aside class="sidebar" *ngIf="selectedCurso">
+
+      <div class="sidebar-header">
+        <button class="close-sidebar-btn" (click)="clearSelectedCurso()">
+          <span class="material-icons">X</span>
+        </button>
+      </div>
+      <h2>{{ selectedCurso.nombre }}</h2> 
+
+      <img class="sidebar-img" [src]="selectedCurso.image" />
+
+      <div class="details-group">
+        <h4>Modalidad</h4>
+        <p>{{ selectedCurso.modalidadNombre }}</p>
+      </div>
+
+      <div class="details-group">
+        <h4>Créditos</h4>
+        <p>{{ selectedCurso.creditos }}</p>
+      </div>
+
+      <div class="details-group">
+        <h4>Departamento</h4>
+        <p>{{ selectedCurso.departamentoNombre }}</p>
+      </div>
+
+      <div class="details-group">
+        <h4>Estado</h4>
+        <p>{{ selectedCurso.activo == 1 ? 'Activo' : 'Inactivo' }}</p>
+      </div>
+
+      <button class="action-btn" (click)="goToClases(selectedCurso)">Ver Clases</button>
+    </aside>
+  </main>
+</div>

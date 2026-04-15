@@ -1,0 +1,102 @@
+{
+  "realm": "iteso",
+  "enabled": true,
+  "displayName": "ITESO Local",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "sslRequired": "none",
+  "clients": [
+    {
+      "clientId": "iteso-backend",
+      "name": "ITESO Backend",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "iteso-secret-local",
+      "redirectUris": ["http://localhost:3000/*", "http://localhost:4200/*"],
+      "webOrigins": ["*"],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "iteso-frontend",
+      "name": "ITESO Frontend (Angular)",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": ["http://localhost:4200/*", "http://localhost:3000/*"],
+      "webOrigins": ["*"],
+      "standardFlowEnabled": true,
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "admin.iteso",
+      "email": "admin@iteso.mx",
+      "firstName": "Laura",
+      "lastName": "Gómez",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{"type": "password", "value": "Admin123!", "temporary": false}],
+      "realmRoles": ["admin"]
+    },
+    {
+      "username": "carlos.perez",
+      "email": "profesor@iteso.mx",
+      "firstName": "Carlos",
+      "lastName": "Pérez",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{"type": "password", "value": "Profesor123!", "temporary": false}],
+      "realmRoles": ["profesor"]
+    },
+    {
+      "username": "ana.martinez",
+      "email": "profesor2@iteso.mx",
+      "firstName": "Ana",
+      "lastName": "Martínez",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{"type": "password", "value": "Profesor2123!", "temporary": false}],
+      "realmRoles": ["profesor"]
+    },
+    {
+      "username": "miguel.santos",
+      "email": "alumno@iteso.mx",
+      "firstName": "Miguel",
+      "lastName": "Santos",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{"type": "password", "value": "Alumno123!", "temporary": false}],
+      "realmRoles": ["alumno"]
+    },
+    {
+      "username": "paola.ruiz",
+      "email": "alumno2@iteso.mx",
+      "firstName": "Paola",
+      "lastName": "Ruiz",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{"type": "password", "value": "Alumno2123!", "temporary": false}],
+      "realmRoles": ["alumno"]
+    },
+    {
+      "username": "javier.luna",
+      "email": "alumno3@iteso.mx",
+      "firstName": "Javier",
+      "lastName": "Luna",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{"type": "password", "value": "Alumno3123!", "temporary": false}],
+      "realmRoles": ["alumno"]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {"name": "admin",    "description": "Coordinador / Administrador"},
+      {"name": "profesor", "description": "Profesor"},
+      {"name": "alumno",   "description": "Alumno"}
+    ]
+  },
+  "defaultRoles": ["alumno"]
+}

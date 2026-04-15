@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY backend/package*.json ./
+RUN npm ci
+
+COPY backend/ .
+
+# ts-node para hot-reload en desarrollo (no compila a dist/)
+RUN npm install -g ts-node nodemon
+
+EXPOSE 3000
+
+CMD ["nodemon", "--exec", "ts-node", "src/index.ts"]

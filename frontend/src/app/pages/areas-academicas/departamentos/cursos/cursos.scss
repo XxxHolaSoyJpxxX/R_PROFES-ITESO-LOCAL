@@ -1,0 +1,198 @@
+$iteso-blue: #00467F; 
+$iteso-dark: #002d5a;
+$card-border-radius: 12px;
+$close-icon-color: #888; 
+
+// --- Contenedor Principal y Layout ---
+
+.page-container {
+    background: #f7f7f7;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    
+    /* Centrado Horizontal y Empuje Vertical */
+    display: flex;
+    justify-content: center; 
+    align-items: flex-start;
+    padding-top: 10vh; 
+}
+
+.main-layout {
+    display: flex;
+    gap: 2rem;
+    padding: 0 2rem 2rem 2rem;
+    align-items: flex-start; 
+    max-width: 1400px; 
+    width: 95%;
+    margin: 0;
+}
+
+.left {
+    flex: 1; 
+    width: auto; 
+    align-self: flex-start;
+}
+
+.title {
+    color: $iteso-dark;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.back-btn {
+    background: none;
+    border: 1px solid #ccc;
+    color: #555;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.2s;
+    
+    &:hover {
+        background-color: #eee;
+    }
+}
+
+// --- Grid y Tarjetas (Cursos) ---
+
+.grid {
+    display: grid;
+    gap: 1.5rem; 
+    grid-template-columns: repeat(auto-fit, minmax(260px, 260px)); 
+    justify-content: flex-start; 
+    width: 100%;
+}
+
+.card {
+    background: white;
+    padding: 1rem;
+    border-radius: $card-border-radius;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    border: 2px solid transparent;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    &.selected {
+        border-color: $iteso-blue; 
+    }
+}
+
+.card-img {
+    width: 100%;
+    height: 140px; 
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $iteso-dark;
+    margin: 0;
+}
+
+.card-subtitle {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 5px;
+}
+
+.sidebar {
+    width: 320px;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    align-self: flex-start; 
+    position: relative; 
+}
+
+
+.sidebar h2 {
+    color: $iteso-dark;
+    font-size: 1.4rem;
+    margin-top: 0.5rem; 
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+
+.sidebar-header {
+    height: 20px; 
+    margin: 0;
+    padding: 0;
+}
+
+.close-sidebar-btn {
+    background: none;
+    border: none;
+    color: $close-icon-color;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+    position: absolute; 
+    top: 15px;      
+    right: 15px;    
+    
+    &:hover {
+        color: $iteso-dark;
+    }
+
+    .material-icons {
+        font-size: 1.5rem; 
+    }
+}
+
+.sidebar-img {
+    width: 100%;
+    height: 160px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+.details-group {
+    margin-bottom: 1rem;
+    h4 {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+    }
+    p {
+        font-weight: 600;
+        color: $iteso-dark;
+        margin: 0;
+    }
+}
+
+.action-btn {
+    width: 100%;
+    background-color: $iteso-blue;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+        background-color: darken($iteso-blue, 10%);
+    }
+}

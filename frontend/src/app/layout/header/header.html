@@ -1,0 +1,27 @@
+<header class="header">
+<button class="icon-btn" (click)="goBack()">
+<span class="material-icons">arrow_back</span>
+<span class="btn-text">Volver</span>
+</button>
+
+
+<a [routerLink]="['/home']" class="logo-link">
+<img
+src="https://oci02.img.iteso.mx/Identidades-De-Instancia/ITESO/Logos%20ITESO/Logo-ITESO-Principal-FondoAzul.png"
+class="logo"
+alt="ITESO"
+/>
+</a>
+
+
+<button class="icon-btn" (click)="toggleMenu()">
+<span class="material-icons">menu</span>
+</button>
+
+
+<div class="dropdown" *ngIf="menuOpen">
+<button class="dropdown-item" (click)="verPerfil()">Ver Perfil</button>
+<button class="dropdown-item" (click)="ayuda()">Ayuda</button>
+<button class="dropdown-item logout" (click)="cerrarSesion()">Cerrar Sesión</button>
+</div>
+</header>

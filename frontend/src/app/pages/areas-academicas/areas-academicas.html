@@ -1,0 +1,28 @@
+<div class="page-container">
+
+  <main class="main-layout">
+
+    <section class="left">
+
+      <h1 class="title">Área Académica</h1>
+
+      <div class="grid">
+        <div
+          class="card"
+          *ngFor="let area of filtered"
+          (click)="selectAreas(area)"
+        >
+          <img class="card-img" [src]="area.image" [alt]="'Imagen de ' + area.nombre" />
+          <h3 class="card-title">{{ area.nombre }}</h3>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar" *ngIf="selectedArea">
+      <h2>Departamentos de: {{ selectedArea.nombre }}</h2>
+          
+      <app-departamentos [areaId]="selectedArea.id"></app-departamentos> 
+      
+      </aside>
+  </main>
+</div>

@@ -1,0 +1,25 @@
+.loading-container, .error-container, .no-role {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.2em;
+    }
+
+    .loading-container {
+      color: #6c757d;
+    }
+
+    .error-container {
+      color: #dc3545;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      margin: 20px;
+    }
+
+    .no-role {
+      color: #856404;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 4px;
+      margin: 20px;
+    }

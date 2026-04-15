@@ -1,0 +1,180 @@
+<div class="page-container">
+  
+  <div *ngIf="isLoading" class="msg-box">
+    <p>Cargando perfil del profesor...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="msg-box error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && profesor" class="perfil-container">
+    
+    <div class="main-content">
+
+      <div class="profesor-header">
+        <div class="profesor-avatar-large">
+          <img 
+            *ngIf="profesor.imagen" 
+            [src]="profesor.imagen" 
+            [alt]="profesor.nombreCompleto"
+            (error)="profesor.imagen = null"
+          >
+          <div *ngIf="!profesor.imagen" class="avatar-placeholder">
+            {{ getInitials(profesor.nombreCompleto) }}
+          </div>
+        </div>
+
+        <div class="profesor-header-info">
+          <h1 class="profesor-nombre">{{ profesor.nombreCompleto }}</h1>
+          <p class="profesor-titulo">{{ profesor.titulo || 'Profesor' }}</p>
+          
+          <div class="contacto-info">
+            <div class="info-item">
+              <span class="material-icons">email</span>
+              <span>{{ profesor.email }}</span>
+            </div>
+            <div class="info-item" *ngIf="profesor.telefono">
+              <span class="material-icons">phone</span>
+              <span>{{ profesor.telefono }}</span>
+            </div>
+            <div class="info-item">
+              <span class="material-icons">badge</span>
+              <span>Exp: {{ profesor.expediente }}</span>
+            </div>
+            <div class="info-item" *ngIf="profesor.departamento">
+              <span class="material-icons">business</span>
+              <span>Dep:{{ profesor.departamento }}</span>
+            </div>
+          </div>
+
+          <div class="rating-general">
+            <div class="rating-value">
+              <span class="rating-number">{{ profesor.calificacionGeneral || 'N/A' }}</span>
+              <div class="stars" *ngIf="profesor.calificacionGeneral || 5">
+                <span 
+                  *ngFor="let filled of getRatingStars(profesor.calificacionGeneral|| 5)" 
+                  class="material-icons star"
+                  [class.filled]="filled"
+                >
+                  {{ filled ? 'star' : 'star_border' }}
+                </span>
+              </div>
+            </div>
+            <p class="rating-count">{{ profesor.totalEvaluaciones || 0 }} evaluaciones</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="info-sections">
+        
+
+        <div class="section" *ngIf="profesor.formacionAcademica && profesor.formacionAcademica.length > 0">
+          <h2 class="section-title">
+            <span class="material-icons">school</span>
+            Formación Académica
+          </h2>
+          <div class="section-content">
+            <div class="estudio-item" *ngFor="let estudio of profesor.formacionAcademica">
+              <h3>{{ estudio.grado }}</h3>
+              <p class="institucion">{{ estudio.institucion }}</p>
+              <p class="anio" *ngIf="estudio.anio">{{ estudio.anio }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" *ngIf="profesor.areasEspecializacion && profesor.areasEspecializacion.length > 0">
+          <h2 class="section-title">
+            <span class="material-icons">lightbulb</span>
+            Áreas de Especialización
+          </h2>
+          <div class="section-content">
+            <div class="tags">
+              <span class="tag" *ngFor="let area of profesor.areasEspecializacion">
+                {{ area }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" *ngIf="profesor.publicaciones && profesor.publicaciones.length > 0">
+          <h2 class="section-title">
+            <span class="material-icons">article</span>
+            Publicaciones Recientes
+          </h2>
+          <div class="section-content">
+            <div class="publicacion-item" *ngFor="let pub of profesor.publicaciones">
+              <h3>{{ pub.titulo }}</h3>
+              <p class="revista">{{ pub.revista }} - {{ pub.anio }}</p>
+              <p class="autores" *ngIf="pub.autores">{{ pub.autores }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" *ngIf="profesor.biografia">
+          <h2 class="section-title">
+            <span class="material-icons">info</span>
+            Biografía
+          </h2>
+          <div class="section-content">
+            <p class="biografia-text">{{ profesor.biografia }}</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h2 class="sidebar-title">Cursos que imparte</h2>
+        
+        <div *ngIf="cursosActivos.length === 0" class="no-cursos">
+          <p>No hay cursos registrados actualmente</p>
+        </div>
+
+        <div class="cursos-list">
+          <div 
+            class="curso-item" 
+            *ngFor="let curso of cursosActivos"
+            (click)="goToCursoEvaluacion(curso.cursoId)"
+          >
+            <div class="curso-info">
+              <h3>{{ curso.cursoNombre }}</h3>
+              <p class="periodo">{{ curso.periodo }}</p>
+              <div class="curso-rating" *ngIf="curso.calificacion">
+                <span class="material-icons star-icon">star</span>
+                <span>{{ curso.calificacion }}</span>
+              </div>
+            </div>
+            <span class="material-icons arrow">chevron_right</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+
+    <div class="section" *ngIf="recursos && recursos.length > 0">
+          <h2 class="section-title">
+            <span class="material-icons">folder_shared</span>
+            Recursos Compartidos
+          </h2>
+          <div class="section-content">
+            <div class="recursos-list">
+              <div class="recurso-item" *ngFor="let recurso of recursos">
+                <a [href]="recurso.signedUrl" target="_blank" class="recurso-link">
+                  <span class="material-icons icon-file">description</span>
+                  <span class="nombre-archivo">{{ recurso.titulo }}</span>
+                </a>
+                <span class="fecha-subida" *ngIf="recurso.fecha_subida">
+                   {{ recurso.fecha_subida | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+  </div>
+
+</div>

@@ -1,5 +1,4 @@
-/* Color ITESO personalizado */
-$iteso-blue: #00467F; // RGB(0, 70, 127)
+$iteso-blue: #00467F;
 $iteso-light-blue: #00B5E2;
 
 .login-container {
@@ -20,56 +19,92 @@ $iteso-light-blue: #00B5E2;
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
-
-  img {
-    height: 80px;
-    width: auto;
-  }
+  img { height: 80px; width: auto; }
 }
 
 .login-card {
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   text-align: center;
 }
 
-/* TÍTULO */
 .title {
-  color: $iteso-blue; // actualizado al color nuevo
+  color: $iteso-blue;
   font-size: 1.7rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
 }
 
-/* CONTENEDOR BOTÓN GOOGLE (mantiene centrado) */
-.google-button-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.25rem;
+/* ── Formulario ─────────────────────────────────────────────── */
+.form-group {
+  text-align: left;
+  margin-bottom: 1.1rem;
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 0.4rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    outline: none;
+
+    &:focus {
+      border-color: $iteso-light-blue;
+    }
+  }
 }
 
-/* SI USAS BOTÓN GOOGLE MANUAL (no Google One Tap) */
-.google-btn {
-  background-color: $iteso-blue;      // color nuevo
+/* ── Botón ──────────────────────────────────────────────────── */
+.login-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: $iteso-blue;
   color: white;
-  padding: 0.7rem 1.2rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-  border: none;
-  transition: 0.2s ease-in-out;
+  transition: background-color 0.2s;
 
+  &:hover:not(:disabled) {
+    background-color: darken($iteso-blue, 8%);
+  }
 
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
-.google-text {
+/* ── Error ──────────────────────────────────────────────────── */
+.error-msg {
+  background: #fdecea;
+  color: #c0392b;
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.footer-text {
   margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: #555;
+  font-size: 0.82rem;
+  color: #999;
 }

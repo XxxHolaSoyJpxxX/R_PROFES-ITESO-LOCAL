@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { UsuarioService } from "../services/usuario.service";
+import { UsuarioModel } from "../models/sql/usuarios.model";
+import { RolesService } from "../services/roles.service";
 import { GoogleAuthService } from "../services/googleAuth.service";
-import { AlumnoModel } from "../models/sql/alumno.model";
 
 export class GoogleAuthController {
 
@@ -14,57 +14,29 @@ export class GoogleAuthController {
         return res.status(400).json({ ok: false, msg: "Falta idToken" });
       }
 
-      // 1. Verificar token Google
-      const googleUser = await GoogleAuthService.verifyIdToken(idToken);
+      // 1. Verificar token con Keycloak
+      const keycloakUser = await GoogleAuthService.verifyIdToken(idToken);
+      const email = keycloakUser.email ?? "";
 
-      const googleId = googleUser.googleId;
-      const email = googleUser.email ?? "";
-      const nombre = googleUser.name ?? "";
-      const avatar = googleUser.picture ?? "";
+      // 2. Buscar usuario en MySQL por email
+      const usuario = await UsuarioModel.getUsuarioByEmail(email);
 
-      // 2. Buscar usuario existente
-      let resultado: any;
-      try {
-        resultado = await UsuarioService.obtenerUsuarioPorId(googleId);
-      } catch {
-        resultado = { error: true };
+      if (!usuario) {
+        return res.status(403).json({
+          ok: false,
+          msg: `No existe una cuenta para ${email}. Contacta al administrador.`
+        });
       }
 
-      let usuarioFinal: any;
-
-      if (!resultado || "error" in resultado) {
-        // 3. Crear usuario nuevo (sin apellidos)
-        usuarioFinal = await UsuarioService.crearUsuario({
-          expediente: googleId,
-          nombre: nombre,
-          apellido_paterno: "",    
-          apellido_materno: "",
-          fecha_de_nacimiento: "2000-01-01",
-          email: email,
-          rol: "3",
-          activo: true,
-          imagen: avatar
-        });
-
-        // Crear registro en tabla alumnos
-        await AlumnoModel.createAlumno({
-          expediente: googleId,
-          carrera: "1",
-          status: "Alumno"
-        }).catch((err) => {
-          console.error("Error al crear alumno para usuario Google:", err);
-        });
-
-      } else {
-        usuarioFinal = Array.isArray(resultado) ? resultado[0] : resultado;
+      // 3. Obtener rol completo
+      const rol = await RolesService.obtenerRolPorId(usuario.rol);
+      if (!rol || "error" in rol) {
+        return res.status(500).json({ ok: false, msg: "Error al obtener el rol del usuario." });
       }
 
-      // 4. JWT
+      // 4. Firmar JWT propio
       const token = jwt.sign(
-        {
-          id: usuarioFinal.expediente,
-          rol: usuarioFinal.rol.rol
-        },
+        { id: usuario.expediente, rol: rol.rol },
         process.env.JWT_SECRET!,
         { expiresIn: "7d" }
       );
@@ -72,12 +44,12 @@ export class GoogleAuthController {
       return res.status(200).json({
         ok: true,
         token,
-        usuario: usuarioFinal.expediente,
-        rol: usuarioFinal.rol
+        usuario: usuario.expediente,
+        rol
       });
 
     } catch (error: any) {
-      console.error("Google Login Error:", error);
+      console.error("Login Error:", error);
       return res.status(500).json({ ok: false, error: error.message });
     }
   }

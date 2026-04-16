@@ -12,8 +12,13 @@
       "enabled": true,
       "publicClient": false,
       "secret": "iteso-secret-local",
-      "redirectUris": ["http://localhost:3000/*", "http://localhost:4200/*"],
-      "webOrigins": ["*"],
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
       "protocol": "openid-connect"
@@ -23,80 +28,144 @@
       "name": "ITESO Frontend (Angular)",
       "enabled": true,
       "publicClient": true,
-      "redirectUris": ["http://localhost:4200/*", "http://localhost:3000/*"],
-      "webOrigins": ["*"],
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
       "standardFlowEnabled": true,
       "protocol": "openid-connect"
     }
   ],
   "users": [
     {
-      "username": "admin.iteso",
+      "username": "admin@iteso.mx",
       "email": "admin@iteso.mx",
       "firstName": "Laura",
       "lastName": "Gómez",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{"type": "password", "value": "Admin123!", "temporary": false}],
-      "realmRoles": ["admin"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
     },
     {
-      "username": "carlos.perez",
+      "username": "profesor@iteso.mx",
       "email": "profesor@iteso.mx",
       "firstName": "Carlos",
       "lastName": "Pérez",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{"type": "password", "value": "Profesor123!", "temporary": false}],
-      "realmRoles": ["profesor"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Profesor123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "profesor"
+      ]
     },
     {
-      "username": "ana.martinez",
+      "username": "profesor2@iteso.mx",
       "email": "profesor2@iteso.mx",
       "firstName": "Ana",
       "lastName": "Martínez",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{"type": "password", "value": "Profesor2123!", "temporary": false}],
-      "realmRoles": ["profesor"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Profesor2123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "profesor"
+      ]
     },
     {
-      "username": "miguel.santos",
+      "username": "alumno@iteso.mx",
       "email": "alumno@iteso.mx",
       "firstName": "Miguel",
       "lastName": "Santos",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{"type": "password", "value": "Alumno123!", "temporary": false}],
-      "realmRoles": ["alumno"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Alumno123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "alumno"
+      ]
     },
     {
-      "username": "paola.ruiz",
+      "username": "alumno2@iteso.mx",
       "email": "alumno2@iteso.mx",
       "firstName": "Paola",
       "lastName": "Ruiz",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{"type": "password", "value": "Alumno2123!", "temporary": false}],
-      "realmRoles": ["alumno"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Alumno2123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "alumno"
+      ]
     },
     {
-      "username": "javier.luna",
+      "username": "alumno3@iteso.mx",
       "email": "alumno3@iteso.mx",
       "firstName": "Javier",
       "lastName": "Luna",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{"type": "password", "value": "Alumno3123!", "temporary": false}],
-      "realmRoles": ["alumno"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Alumno3123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "alumno"
+      ]
     }
   ],
   "roles": {
     "realm": [
-      {"name": "admin",    "description": "Coordinador / Administrador"},
-      {"name": "profesor", "description": "Profesor"},
-      {"name": "alumno",   "description": "Alumno"}
+      {
+        "name": "admin",
+        "description": "Coordinador / Administrador"
+      },
+      {
+        "name": "profesor",
+        "description": "Profesor"
+      },
+      {
+        "name": "alumno",
+        "description": "Alumno"
+      }
     ]
   },
-  "defaultRoles": ["alumno"]
+  "defaultRoles": [
+    "alumno"
+  ]
 }

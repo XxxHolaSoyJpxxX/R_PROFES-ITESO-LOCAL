@@ -1,3 +1,9 @@
+// En desarrollo Angular corre en :4200 y usa el proxy para evitar CORS
 export const environment = {
-	 googleClientId: '152305242233-4de38h7c2g1m6jm2tl908c1o8hkua75g.apps.googleusercontent.com',
+  keycloakUrl:    '',           // vacío = usa proxy /keycloak
+  keycloakRealm:  'iteso',
+  keycloakClient: 'iteso-backend',
+  keycloakSecret: 'iteso-secret-local',
+  apiUrl:         '/api',
+  useKeycloakProxy: true,       // flag para el login component
 };

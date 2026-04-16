@@ -100,10 +100,18 @@ const deleteUsuario = async (expediente: string) => {
     return result;
 }
 
+const getUsuarioByEmail = async (email: string): Promise<Usuario | null> => {
+    const query = 'SELECT * FROM usuario WHERE email = ? AND activo = true';
+    const [rows] = await pool.query(query, [email]);
+    const results = rows as Usuario[];
+    return results.length > 0 ? results[0] : null;
+}
+
 export const UsuarioModel = {
     getUsuarios,
     getUsuariosByRol,
     getUsuarioByExpediente,
+    getUsuarioByEmail,
     createUsuario,
     updateUsuario,
     deleteUsuario

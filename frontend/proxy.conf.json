@@ -1,7 +1,15 @@
 {
   "/api": {
-    "target": "http://localhost:3000",
+    "target": "http://backend-dev:3000",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/keycloak": {
+    "target": "http://keycloak:8080",
+    "changeOrigin": true,
     "secure": false,
-    "changeOrigin": true
+    "pathRewrite": {
+      "^/keycloak": ""
+    }
   }
 }

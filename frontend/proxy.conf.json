@@ -8,8 +8,6 @@
     "target": "http://keycloak:8080",
     "changeOrigin": true,
     "secure": false,
-    "pathRewrite": {
-      "^/keycloak": ""
-    }
+    "pathRewrite": { "^/keycloak": "" }
   }
 }

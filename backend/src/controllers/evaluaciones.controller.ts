@@ -118,6 +118,8 @@ async function crearEvaluaciones(req: Request, res: Response) {
         }
         return res.status(201).json(evaluacion);
     } catch (error) {
+        console.error("ERROR EVALUACION:", error);
+        console.log("Error details:",error);
         return res.status(500).json({message: "Error al crear la evaluacion. ", error});
     }
 }

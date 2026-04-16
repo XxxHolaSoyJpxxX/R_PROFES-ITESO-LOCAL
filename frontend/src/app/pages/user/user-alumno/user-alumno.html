@@ -61,14 +61,14 @@
           </div>
 
           <button 
-            [disabled]="curso.activo == 0" 
+            [disabled]="yaEvaluado(curso.id)" 
             [ngClass]="{
-              'btn-evaluar-activo': curso.activo == 1,
-              'btn-evaluar-inactivo': curso.activo == 0
+              'btn-evaluar-activo': !yaEvaluado(curso.id),
+              'btn-evaluar-inactivo': yaEvaluado(curso.id)
             }"
-            (click)="curso.activo == 1 ? evaluarCurso(curso.id) : null"
+            (click)="!yaEvaluado(curso.id) ? evaluarCurso(curso.id) : null"
           >
-            {{ curso.activo == 1 ? 'Evaluar' : 'Evaluado' }}
+            {{ yaEvaluado(curso.id) ? 'Ya evaluado' : 'Evaluar' }}
           </button>
 
         </li>

@@ -43,28 +43,23 @@ jobs:
       - name: Snyk — instalar CLI
         run: npm install -g snyk
 
-      - name: Snyk — autenticar
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
       - name: Snyk Code — análisis estático del código backend (SAST)
-        run: snyk code test backend/
+        run: snyk code test backend/ --json > snyk-code-report.json || true
         continue-on-error: true
-        # continue-on-error para no bloquear el pipeline en la primera ejecución
-        # Quitar cuando se hayan revisado y resuelto los findings iniciales
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Snyk Open Source — dependencias backend (SCA)
-        run: snyk test --file=backend/package.json --severity-threshold=high
+        run: snyk test --file=backend/package.json --severity-threshold=high --json > snyk-deps-backend.json || true
         continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Snyk Open Source — dependencias frontend (SCA)
-        run: snyk test --file=frontend/package.json --severity-threshold=high
+        run: snyk test --file=frontend/package.json --severity-threshold=high --json > snyk-deps-frontend.json || true
         continue-on-error: true
-
-      - name: Snyk — generar reporte JSON backend
-        run: snyk code test backend/ --json > snyk-code-report.json || true
-
-      - name: Snyk — generar reporte dependencias
-        run: snyk test --file=backend/package.json --json > snyk-deps-report.json || true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       # ── npm audit ─────────────────────────────────────────────────────────
       - name: npm audit — backend
@@ -116,7 +111,8 @@ jobs:
           name: sast-reports
           path: |
             snyk-code-report.json
-            snyk-deps-report.json
+            snyk-deps-backend.json
+            snyk-deps-frontend.json
             npm-audit-backend.json
             npm-audit-frontend.json
             eslint-security-report.json

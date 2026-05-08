@@ -1,6 +1,7 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
-export interface IRecurso extends Document {
+// Omitimos _id de Document para redefinirlo como string
+export interface IRecurso extends Omit<Document, '_id'> {
     _id: string;
     profesor_expediente: string;
     url: string;

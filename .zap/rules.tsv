@@ -1,0 +1,32 @@
+# Reglas OWASP ZAP — ITESO Evaluación Docente
+# Formato: ID TAB WARN|IGNORE|FAIL
+# Referencia: https://www.zaproxy.org/docs/alerts/
+
+# 10015 — Incomplete or No Cache-control Header
+# El backend es una API REST, no sirve páginas HTML con caché
+10015	IGNORE
+
+# 10027 — Information Disclosure - Suspicious Comments
+# Comentarios en código de desarrollo, no en producción
+10027	IGNORE
+
+# 10096 — Timestamp Disclosure
+# Timestamps en respuestas JSON son esperados en una API
+10096	IGNORE
+
+# 10112 — Session Management Response Identified
+# Manejamos sesión con JWT, no con cookies de sesión
+10112	IGNORE
+
+# Alertas que SÍ deben fallar el pipeline
+# 10202 — Absence of Anti-CSRF Tokens -> FAIL para APIs con formularios
+10202	WARN
+
+# 10038 — Content Security Policy Header Not Set
+10038	WARN
+
+# 10020 — Missing Anti-clickjacking Header
+10020	WARN
+
+# 10021 — X-Content-Type-Options Header Missing
+10021	WARN

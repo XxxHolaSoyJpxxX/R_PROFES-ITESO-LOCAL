@@ -1,0 +1,240 @@
+name: CI — ITESO Evaluación Docente
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 1: Validar docker-compose
+  # ──────────────────────────────────────────────────────────────────────────
+  validate-compose:
+    name: Validar docker-compose.yml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar sintaxis (prod)
+        run: docker compose --profile prod config --quiet
+
+      - name: Validar sintaxis (dev)
+        run: docker compose --profile dev config --quiet
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 2: Backend — Lint + Tests unitarios + Build
+  # ──────────────────────────────────────────────────────────────────────────
+  backend:
+    name: Backend — Lint, Tests & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar dependencias de test
+        run: npm install --save-dev jest ts-jest @types/jest
+
+      - name: Lint TypeScript (chequeo de tipos)
+        run: npx tsc --noEmit
+
+      - name: Tests unitarios
+        run: npx jest --config jest.config.json --coverage
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-secret-jest
+          AWS_BUCKET_NAME: iteso-archivos
+          MINIO_ENDPOINT: http://localhost:9000
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin123
+          AWS_REGION: us-east-1
+
+      - name: Build (compilar a dist/)
+        run: npm run build
+
+      - name: Subir reporte de cobertura
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-backend
+          path: backend/coverage/
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 3: Frontend — Lint + Tests unitarios + Build
+  # ──────────────────────────────────────────────────────────────────────────
+  frontend:
+    name: Frontend — Lint, Tests & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint Angular
+        run: npx ng lint --max-warnings=0
+        continue-on-error: true
+
+      - name: Tests unitarios (Karma headless)
+        run: npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+
+      - name: Build Angular (producción)
+        run: npx ng build --configuration=production
+
+      - name: Subir reporte de cobertura
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-frontend
+          path: frontend/coverage/
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # JOB 4: Integración — Levantar servicios y probar endpoints reales
+  # ──────────────────────────────────────────────────────────────────────────
+  integration:
+    name: Pruebas de integración (Docker Compose)
+    runs-on: ubuntu-latest
+    needs: [validate-compose, backend, frontend]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crear .env para CI
+        run: |
+          cat > .env << 'ENV'
+          RDB_HOST=mysql
+          RDB_USER=iteso_user
+          RDB_PASSWORD=iteso_password
+          RDB_NAME=iteso_db
+          RDB_PORT=3306
+          MONGO_URI=mongodb://root:rootpassword@mongodb:27017/iteso_nube?authSource=admin
+          MINIO_ENDPOINT=http://minio:9000
+          AWS_REGION=us-east-1
+          AWS_ACCESS_KEY_ID=minioadmin
+          AWS_SECRET_ACCESS_KEY=minioadmin123
+          AWS_BUCKET_NAME=iteso-archivos
+          KEYCLOAK_ISSUER=http://keycloak:8080/realms/iteso
+          KEYCLOAK_CLIENT_ID=iteso-backend
+          KEYCLOAK_CLIENT_SECRET=iteso-secret-local
+          GOOGLE_CLIENT_ID=iteso-backend
+          GOOGLE_CLIENT_SECRET=iteso-secret-local
+          GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
+          JWT_SECRET=ci-secret-64-chars-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+          SMTP_HOST=mailpit
+          SMTP_PORT=1025
+          EMAIL_SENDER=sistema@iteso.mx
+          EMAIL_RECIPIENT=notificaciones@iteso.mx
+          NODE_ENV=development
+          PORT=3000
+          ENV
+
+      - name: Levantar infraestructura
+        run: docker compose up -d mysql mongodb minio keycloak mailpit
+
+      - name: Esperar MySQL
+        run: |
+          for i in $(seq 1 30); do
+            docker compose exec -T mysql mysqladmin ping -u root -prootpassword --silent && echo "MySQL listo" && break
+            echo "Intento $i/30..."
+            sleep 5
+          done
+
+      - name: Esperar MongoDB
+        run: |
+          for i in $(seq 1 20); do
+            docker compose exec -T mongodb mongosh --quiet --eval "db.adminCommand('ping').ok" && echo "MongoDB listo" && break
+            echo "Intento $i/20..."
+            sleep 5
+          done
+
+      - name: Esperar Keycloak
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/health/ready && echo "Keycloak listo" && break
+            echo "Intento $i/30..."
+            sleep 10
+          done
+
+      - name: Levantar backend
+        run: docker compose --profile dev up -d backend-dev
+
+      - name: Esperar backend
+        run: |
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:3000/health && echo "Backend listo" && break
+            echo "Intento $i/20..."
+            sleep 5
+          done
+
+      - name: Test — GET /health
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health)
+          [ "$STATUS" = "200" ] || (echo "FALLO: /health devolvió $STATUS" && exit 1)
+          echo "✓ /health → $STATUS"
+
+      - name: Test — GET /metrics
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/metrics)
+          [ "$STATUS" = "200" ] || (echo "FALLO: /metrics devolvió $STATUS" && exit 1)
+          echo "✓ /metrics → $STATUS"
+
+      - name: Test — POST /api/auth/google sin token devuelve 400
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST http://localhost:3000/api/auth/google \
+            -H "Content-Type: application/json" \
+            -d '{}')
+          [ "$STATUS" = "400" ] || (echo "FALLO: esperado 400, recibido $STATUS" && exit 1)
+          echo "✓ /api/auth/google sin token → $STATUS"
+
+      - name: Test — Keycloak OIDC discovery
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://localhost:8080/realms/iteso/.well-known/openid-configuration)
+          [ "$STATUS" = "200" ] || (echo "FALLO: Keycloak OIDC → $STATUS" && exit 1)
+          echo "✓ Keycloak OIDC discovery → $STATUS"
+
+      - name: Test — MinIO health
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000/minio/health/live)
+          [ "$STATUS" = "200" ] || (echo "FALLO: MinIO → $STATUS" && exit 1)
+          echo "✓ MinIO health → $STATUS"
+
+      - name: Test — ruta inexistente devuelve 404
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/ruta-que-no-existe)
+          [ "$STATUS" = "404" ] || (echo "FALLO: esperado 404, recibido $STATUS" && exit 1)
+          echo "✓ /api/ruta-inexistente → $STATUS"
+
+      - name: Logs del backend si hay fallo
+        if: failure()
+        run: docker compose logs backend-dev --tail 60
+
+      - name: Teardown
+        if: always()
+        run: docker compose --profile dev down -v

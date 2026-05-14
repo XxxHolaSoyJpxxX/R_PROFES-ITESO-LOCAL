@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  
+
 jobs:
 
   # ──────────────────────────────────────────────────────────────────────────
@@ -16,6 +16,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Crear .env mínimo para validación
+        run: |
+          cat > .env << 'ENV'
+          RDB_HOST=mysql
+          RDB_USER=iteso_user
+          RDB_PASSWORD=iteso_password
+          RDB_NAME=iteso_db
+          RDB_PORT=3306
+          MONGO_URI=mongodb://root:rootpassword@mongodb:27017/iteso_nube?authSource=admin
+          MINIO_ENDPOINT=http://minio:9000
+          AWS_REGION=us-east-1
+          AWS_ACCESS_KEY_ID=minioadmin
+          AWS_SECRET_ACCESS_KEY=minioadmin123
+          AWS_BUCKET_NAME=iteso-archivos
+          KEYCLOAK_ISSUER=http://keycloak:8080/realms/iteso
+          KEYCLOAK_CLIENT_ID=iteso-backend
+          KEYCLOAK_CLIENT_SECRET=iteso-secret-local
+          GOOGLE_CLIENT_ID=iteso-backend
+          GOOGLE_CLIENT_SECRET=iteso-secret-local
+          GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
+          JWT_SECRET=ci-secret-64-chars-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+          SMTP_HOST=mailpit
+          SMTP_PORT=1025
+          EMAIL_SENDER=sistema@iteso.mx
+          EMAIL_RECIPIENT=notificaciones@iteso.mx
+          NODE_ENV=development
+          PORT=3000
+          ENV
 
       - name: Validar sintaxis (prod)
         run: docker compose --profile prod config --quiet

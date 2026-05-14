@@ -1,3 +1,4 @@
+import helmet from 'helmet';
 import express, { Request, Response } from 'express';
 import path from 'path';
 import routes from './routes/routes';
@@ -5,7 +6,7 @@ import metricsMiddleware from './middlewares/metricsMiddleware';
 import { getPrometheusMetrics } from './utils/cloudwatch';
 
 const app = express();
-
+app.use(helmet());
 app.use(express.json());
 
 app.use((req, res, next) => {

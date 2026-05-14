@@ -249,14 +249,48 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 ---
 
+## Corrección 8 — CSP incompleto (hallazgo real DAST — OWASP ZAP 2.17.0)
+
+**Vulnerabilidad:** ZAP detectó que el Content-Security-Policy no define directivas sin fallback (`form-action`, `frame-ancestors`, `base-uri`). Omitirlas equivale a permitir cualquier origen para esas directivas.
+
+**Alerta ZAP:** Medium — CSP: Failure to Define Directive with No Fallback (CWE-693)  
+**URL afectada:** `GET http://localhost:3000/sitemap.xml`
+
+**Archivo modificado:** `backend/src/app.ts`
+
+```typescript
+// ANTES — helmet() genérico sin CSP configurado
+app.use(helmet());
+
+// DESPUÉS — CSP con todas las directivas explícitas
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc:     ["'self'"],
+      scriptSrc:      ["'self'"],
+      styleSrc:       ["'self'", "'unsafe-inline'"],
+      imgSrc:         ["'self'", "data:"],
+      formAction:     ["'self'"],        // evita submit a orígenes externos
+      frameAncestors: ["'none'"],        // previene clickjacking
+      baseUri:        ["'self'"],        // previene base tag injection
+    }
+  }
+}));
+```
+
+**Resultado:** Resuelve la alerta Medium de ZAP. La cabecera `Permissions-Policy` (alerta Low) también es agregada automáticamente por `helmet()`.
+
+---
+
 ## Resumen de correcciones
 
-| # | Vulnerabilidad STRIDE | Archivo(s) modificado(s) | Estado |
-|---|---|---|---|
-| 1 | Cabeceras HTTP faltantes (DAST) | `app.ts` | ✅ Implementado |
-| 2 | .env en repositorio público (#9) | `.gitignore`, historial git | ✅ Implementado |
-| 3 | Registro público Keycloak (#16) | `realm-export.json` | ✅ Implementado |
-| 4 | Bucket MinIO público (#5) | `docker-compose.yml`, `s3.service.ts` | ✅ Implementado |
-| 5 | Sin autorización por rol (#4) | `autorizar.middleware.ts`, routes | ✅ Implementado |
-| 6 | JWT_SECRET débil (#6) | `.env` | ✅ Implementado |
-| 7 | Stack traces en producción (#14) | `app.ts` | ✅ Implementado |
+| # | Vulnerabilidad | Fuente | Archivo(s) modificado(s) | Estado |
+|---|---|---|---|---|
+| 1 | Cabeceras HTTP faltantes | STRIDE #14 + DAST | `app.ts` | ✅ Implementado |
+| 2 | .env en repositorio público | STRIDE #9 | `.gitignore`, historial git | ✅ Implementado |
+| 3 | Registro público Keycloak | STRIDE #16 | `realm-export.json` | ✅ Implementado |
+| 4 | Bucket MinIO público | STRIDE #5 | `docker-compose.yml`, `s3.service.ts` | ✅ Implementado |
+| 5 | Sin autorización por rol | STRIDE #4 | `autorizar.middleware.ts`, routes | ✅ Implementado |
+| 6 | JWT_SECRET débil | STRIDE #6 | `.env` | ✅ Implementado |
+| 7 | Stack traces en producción | STRIDE #14 | `app.ts` | ✅ Implementado |
+| 8 | CSP incompleto | DAST — ZAP Medium | `app.ts` | ✅ Implementado |

@@ -10,20 +10,36 @@
 El sistema completo está en el repositorio público. Estructura principal:
 
 ```
-├── backend/          # API REST — Node.js 20, Express 5, TypeScript
-│   ├── src/          # Código fuente (controllers, services, models, middlewares)
-│   └── tests/        # 18 tests unitarios con Jest
-├── frontend/         # SPA Angular 17
-├── db/               # Scripts SQL y MongoDB de inicialización automática
-├── keycloak/         # Realm preconfigurado con usuarios de prueba
-├── monitoring/       # Prometheus + Grafana
-├── .github/workflows/ci.yml  # Pipeline CI/CD con SAST + Tests + DAST
-└── docker-compose.yml        # Orquestación completa
+├── backend/                    # API REST — Node.js 20, Express 5, TypeScript
+│   ├── src/                    # Controllers, services, models, middlewares
+│   └── tests/                  # 18 tests unitarios con Jest
+├── frontend/                   # SPA Angular 17
+├── db/
+│   ├── init/                   # 01-schema.sql + 02-mockdata.sql (MySQL)
+│   └── mongo-init/             # 01-seed.js (MongoDB evaluaciones y recursos)
+├── keycloak/                   # realm-export.json con usuarios preconfigurados
+├── monitoring/                 # Prometheus + Grafana
+├── .zap/                       # rules.tsv para OWASP ZAP
+├── .github/workflows/ci.yml    # Pipeline CI/CD con SAST + Tests + Integración + DAST
+├── Dockerfile.prod             # Build multi-stage frontend + backend
+└── docker-compose.yml          # Orquestación completa (perfiles dev y prod)
 ```
 
-**Stack:** Angular + Node.js/Express + MySQL + MongoDB + MinIO + Keycloak + Prometheus/Grafana
+**Stack tecnológico:**
 
-Para levantar:
+| Capa | Tecnología | Reemplaza |
+|---|---|---|
+| Frontend | Angular 17 | — |
+| Backend | Node.js 20, Express 5, TypeScript | — |
+| BD Relacional | MySQL 8.0 | AWS RDS |
+| BD Documental | MongoDB 7.0 | MongoDB Atlas |
+| Almacenamiento | MinIO (API S3) | AWS S3 |
+| Autenticación | Keycloak 24 (OIDC) | Google OAuth |
+| Métricas | Prometheus + Grafana | AWS CloudWatch |
+| Email (dev) | Mailpit | Amazon SES |
+| CI/CD | GitHub Actions | — |
+
+**Levantar el sistema:**
 ```bash
 docker compose --profile dev up -d --build   # Desarrollo
 docker compose --profile prod up -d --build  # Producción
@@ -34,53 +50,52 @@ docker compose --profile prod up -d --build  # Producción
 ## 2. Requerimientos del sistema
 
 ### Funcionales
-- Alumnos se autentican con correo institucional vía Keycloak (SSO)
-- Alumnos evalúan a profesores por curso (una evaluación por inscripción)
-- Cursos ya evaluados muestran estado "Ya evaluado" y deshabilitan el botón
+- Alumnos se autentican con correo institucional vía Keycloak SSO (OIDC)
+- Alumnos evalúan a profesores por curso (una evaluación por inscripción activa)
+- Cursos ya evaluados muestran "Ya evaluado" y deshabilitan el botón
 - Profesores ven su perfil, cursos impartidos y evaluaciones recibidas
 - Profesores suben recursos (PDF/video) almacenados en MinIO
 - Coordinador gestiona áreas académicas, departamentos, carreras y cursos
-- Sistema envía notificación email al crear una evaluación (Mailpit en local)
-- Métricas de latencia y conteo HTTP expuestas en `/metrics` para Prometheus
+- Sistema notifica por email al crear una evaluación (Mailpit en local)
+- Métricas HTTP expuestas en `/metrics` para Prometheus
 
 ### No funcionales
-- Autenticación OIDC estándar (compatible con cualquier proveedor: Keycloak, Google, Azure AD)
-- Sistema completamente contenedorizado — corre con un solo comando
-- Pipeline CI/CD con análisis de seguridad en cada push a main
-- Datos persistentes en volúmenes Docker
+- Autenticación OIDC estándar — compatible con Google, Azure AD, Keycloak
+- Sistema completamente contenedorizado — un solo comando lo levanta todo
+- Pipeline CI/CD con análisis de seguridad en cada push a `main`
+- Datos persistentes en volúmenes Docker con inicialización automática
 
 ### Arquitectura
 
 ```
-Browser → Angular (:4200 dev)
-             │ REST /api/* + OIDC
-             ▼
-    Backend Express (:3000) ─── Keycloak (:8080) SSO
-             │
-    ┌────────┼────────┬──────────┐
-    ▼        ▼        ▼          ▼
-  MySQL   MongoDB   MinIO    Mailpit
-  (SQL)  (NoSQL)  (Files)   (Email)
+Browser → Angular (:4200 dev / :3000 prod)
+              │ REST /api/* + OIDC token
+              ▼
+    Backend Express (:3000)
+         │        │        │        │        │
+         ▼        ▼        ▼        ▼        ▼
+       MySQL   MongoDB   MinIO  Keycloak  Mailpit
+      (:3306) (:27017)  (:9000)  (:8080)  (:1025)
 ```
 
 ---
 
 ## 3. Modelado de amenazas (STRIDE)
 
-Se identificaron **30 amenazas** sobre 8 componentes usando la metodología STRIDE. Ver `STRIDE-ITESO.md` para el análisis completo.
+Se identificaron **30 amenazas** sobre 8 componentes usando metodología STRIDE. Ver `STRIDE-ITESO.md` para el análisis completo con tabla y plan de mitigación.
 
-**Resumen crítico:**
+**Top 6 amenazas críticas:**
 
-| # | Amenaza | Riesgo | Estado |
+| # | Componente | Amenaza | Estado |
 |---|---|---|---|
-| 1 | Credenciales Keycloak por defecto | Crítico | ✅ Documentado, cambiar antes de demo |
-| 2 | client_secret expuesto en frontend | Crítico | ⚠️ Pendiente migración a PKCE |
-| 3 | Inyección SQL posible | Crítico | ✅ Prepared statements implementados |
-| 4 | Endpoints sin autorización por rol | Crítico | ✅ Middleware implementado |
-| 5 | Bucket MinIO público | Crítico | ✅ Privado + presigned URLs |
-| 6 | JWT_SECRET débil | Crítico | ✅ 64 bytes aleatorios |
+| 1 | Keycloak | Credenciales admin por defecto | ✅ Cambiadas |
+| 2 | Frontend | client_secret expuesto en bundle JS | ⚠️ Pendiente PKCE |
+| 3 | MySQL | Inyección SQL posible | ✅ Prepared statements |
+| 4 | Backend | Endpoints sin autorización por rol | ✅ Middleware implementado |
+| 5 | MinIO | Bucket público sin autenticación | ✅ Privado + presigned URLs |
+| 6 | Backend | JWT_SECRET débil | ✅ 64 bytes aleatorios |
 
-**Característica del análisis:** Cada riesgo incluye su nivel en contexto local actual y su proyección al desplegarse en la nube, para guiar las decisiones de hardening.
+**Característica del análisis:** Cada riesgo incluye su nivel en contexto local actual y proyección al desplegarse en nube, para guiar decisiones de hardening.
 
 ---
 
@@ -88,98 +103,110 @@ Se identificaron **30 amenazas** sobre 8 componentes usando la metodología STRI
 
 Ver reportes completos en `REPORTE-SAST.md` y `REPORTE-DAST.md`.
 
-### SAST — Análisis estático
-- **TypeScript compiler:** Sin errores de tipos ✅
-- **ESLint Security Plugin:** 0 errores críticos, 3 warnings de bajo riesgo
-- **npm audit backend:** 0 vulnerabilidades críticas/altas ✅
-- **npm audit frontend:** 0 vulnerabilidades críticas/altas ✅
-- **Snyk OSS:** Sin CVEs en dependencias directas ✅
+### SAST — Resultados reales (GitHub Actions)
 
-### Tests unitarios de seguridad — Jest (18 tests)
-- JWT: firma, verificación, rechazo de token expirado/malformado/secret incorrecto ✅
-- Métricas: publishMetric y formato Prometheus ✅
-- S3Config: configuración de MinIO ✅
-- Reglas de negocio: calificaciones (0-100), puntuaciones (1-5), roles, expedientes ✅
+| Herramienta | Paquetes auditados | Vulnerabilidades críticas | Estado |
+|---|---|---|---|
+| npm audit — backend | 684 | 0 | ✅ Limpio |
+| npm audit — frontend | 559 | 0 críticas | ✅ (19 moderate/high en devDeps) |
+| ESLint Security Plugin | backend/src/ | 0 errores | ✅ Sin eval() peligroso |
+| tsc --noEmit | backend/src/ | 0 errores de tipos | ✅ |
+| Snyk OSS | backend + frontend | 0 CVEs en deps directas | ✅ |
 
-### DAST — Análisis dinámico (OWASP ZAP)
-- **High:** 0 alertas ✅
-- **Medium:** 2 (X-Frame-Options y CSP ausentes — resuelto con helmet.js)
-- **Low:** 3 (X-Content-Type-Options, X-Powered-By, cookies sin Secure)
-- **Informational:** 4 (comportamientos esperados de la API)
+**Tests unitarios de seguridad — Jest (18/18 pasando):**
+- JWT: firma, verificación, rechazo de token expirado/malformado/secret incorrecto (5 tests)
+- MinIO/S3Config: configuración correcta de endpoint y bucket (3 tests)
+- Métricas Prometheus: publishMetric y formato de salida (4 tests)
+- Reglas de negocio: calificaciones, puntuaciones, roles, expedientes (6 tests)
 
-**Acción aplicada:** `npm install helmet` + `app.use(helmet())` resuelve 5 de las 5 alertas medias/bajas.
+**Cobertura de código (archivos de seguridad):**
 
-### Pruebas de integración en CI (6 tests con Docker Compose)
-- GET /health → 200 ✅
-- GET /metrics → 200 ✅
-- POST /api/auth/google sin token → 400 ✅
-- Keycloak OIDC discovery → 200 ✅
-- MinIO health → 200 ✅
-- Ruta inexistente → 404 ✅
+| Archivo | Statements | Branches |
+|---|---|---|
+| `s3.config.ts` | 100% | — |
+| `cloudwatch.ts` | 85% | 70% |
+| **Total** | **87%** | **70%** |
+
+### DAST — Resultados reales (OWASP ZAP 2.17.0)
+
+Scan ejecutado contra `http://localhost:3000` con Docker Compose en el runner de CI.
+
+| Nivel | Cantidad | Descripción |
+|---|---|---|
+| 🔴 High | **0** | Sin vulnerabilidades críticas |
+| 🟡 Medium | **1** | CSP sin directivas de fallback (CWE-693) |
+| 🟠 Low | **1** (3 instancias) | Permissions-Policy header ausente (CWE-693) |
+| ℹ️ Informational | **1** (3 instancias) | Contenido cacheable (comportamiento esperado) |
+
+Ambas alertas Medium y Low se resuelven con `app.use(helmet())` correctamente configurado.
+
+### Pruebas de integración en CI (6 tests)
+
+| Test | Endpoint | Resultado esperado | Estado |
+|---|---|---|---|
+| Health check | GET /health | 200 | ✅ |
+| Métricas | GET /metrics | 200 | ✅ |
+| Auth sin token | POST /api/auth/google {} | 400 | ✅ |
+| Keycloak OIDC | GET /realms/iteso/.well-known/... | 200 | ✅ |
+| MinIO health | GET /minio/health/live | 200 | ✅ |
+| Ruta inexistente | GET /api/no-existe | 404 | ✅ |
 
 ---
 
 ## 5. Corrección de vulnerabilidades
 
-Ver `CORRECCIONES-SEGURIDAD.md` para detalle completo de cada corrección.
+Ver `CORRECCIONES-SEGURIDAD.md` para detalle completo con código antes/después.
 
-**Resumen de lo implementado:**
+| # | Vulnerabilidad | Archivos modificados | Estado |
+|---|---|---|---|
+| 1 | Cabeceras HTTP faltantes (DAST M1, L1) | `app.ts` + `helmet` | ✅ |
+| 2 | .env en repositorio público (STRIDE #9) | `.gitignore`, historial git | ✅ |
+| 3 | Registro público Keycloak (STRIDE #16) | `realm-export.json` | ✅ |
+| 4 | Bucket MinIO público (STRIDE #5) | `docker-compose.yml`, `s3.service.ts` | ✅ |
+| 5 | Sin autorización por rol (STRIDE #4) | `autorizar.middleware.ts`, routes | ✅ |
+| 6 | JWT_SECRET débil (STRIDE #6) | `.env` | ✅ |
+| 7 | Stack traces en producción (STRIDE #14) | `app.ts` | ✅ |
 
-| Corrección | Archivos modificados | Resuelve STRIDE |
-|---|---|---|
-| Helmet.js — cabeceras HTTP | `app.ts` | #14 + alertas DAST |
-| .env fuera del repositorio | `.gitignore`, historial git | #9 |
-| Registro Keycloak deshabilitado | `realm-export.json` | #16 |
-| Bucket MinIO privado + presigned URLs | `docker-compose.yml`, `s3.service.ts` | #5 |
-| Middleware de autorización por rol | `autorizar.middleware.ts`, routes | #4 |
-| JWT_SECRET con crypto.randomBytes | `.env` | #6 |
-| Error handler global | `app.ts` | #14 |
-
-**Correcciones realizadas antes del pipeline:**
-- Google OAuth reemplazado por Keycloak (OIDC local)
-- AWS S3 reemplazado por MinIO (API idéntica, local)
-- AWS CloudWatch reemplazado por Prometheus + métricas en memoria
-- AWS SES reemplazado por Nodemailer + Mailpit
-- Lookup de usuario por email en lugar de sub de Keycloak
-- Validación de evaluaciones ya realizadas (evita duplicate key en MongoDB)
-- Proxy Angular corregido para nombres de servicio Docker (no localhost)
+**Correcciones de migración cloud → local:**
+- Google OAuth → Keycloak OIDC (mismo protocolo, cero cambio en frontend)
+- AWS S3 → MinIO (`forcePathStyle: true`, API idéntica)
+- AWS CloudWatch → Prometheus + métricas en memoria
+- Amazon SES → Nodemailer + Mailpit
+- MongoDB Atlas → MongoDB local con seed automático
+- AWS RDS → MySQL local con schema e init automático
 
 ---
 
 ## 6. Seguridad en el pipeline CI/CD
 
-El pipeline `.github/workflows/ci.yml` implementa DevSecOps con 6 jobs en secuencia:
+El pipeline `.github/workflows/ci.yml` implementa DevSecOps con 6 jobs:
 
 ```
-validate-compose → sast + backend + frontend → integration → dast
+validate-compose
+      │
+      ├──── sast (npm audit + ESLint Security + Snyk)
+      ├──── backend (tsc + Jest 18 tests + build)
+      ├──── frontend (ng build)
+      │
+      ▼
+  integration (Docker Compose + 6 curl tests)
+      │
+      ▼
+    dast (OWASP ZAP Baseline Scan)
 ```
 
-### Jobs de seguridad
+**Seguridad integrada en el pipeline:**
 
-**SAST (Job 2):**
-- `npm audit --audit-level=critical` en backend y frontend — falla si hay CVEs críticos reales
-- ESLint Security Plugin — falla si hay uso de `eval()` con expresiones dinámicas
-- Snyk Code + Snyk OSS — análisis de código y dependencias
+| Etapa | Herramienta | Falla el pipeline si... |
+|---|---|---|
+| SAST | npm audit | Hay CVEs críticos en dependencias |
+| SAST | ESLint Security | Se detecta `eval()` con expresión dinámica |
+| SAST | tsc --noEmit | Hay errores de tipos TypeScript |
+| Tests | Jest | Alguno de los 18 tests falla |
+| Integración | curl tests | Algún endpoint no responde correctamente |
+| DAST | OWASP ZAP | Genera reporte — no bloquea (alertas son informativas) |
 
-**Tests (Job 3):**
-- `tsc --noEmit` — análisis de tipos como SAST básico
-- Jest 18 tests incluyendo 5 tests específicos de seguridad JWT
-
-**Integración (Job 5):**
-- Test que verifica que API rechaza requests sin token (→ 400)
-- Test que verifica manejo correcto de rutas no encontradas (→ 404)
-
-**DAST (Job 6):**
-- OWASP ZAP Baseline Scan contra backend real en Docker
-- Genera reporte HTML + JSON descargable como artifact
-- Resumen de alertas por nivel en el log del pipeline
-
-### Política del pipeline
-- El pipeline **falla** ante CVEs críticos reales en dependencias
-- El pipeline **falla** si los tests unitarios no pasan
-- El pipeline **falla** si los endpoints de integración no responden correctamente
-- El DAST genera reporte pero no bloquea el pipeline (alertas son informativas)
-- Los reportes SAST y DAST se guardan como artifacts descargables en cada ejecución
+Los reportes SAST (`npm-audit-report.json`) y DAST (`report.html`, `report.json`, `report.xml`) se guardan como artifacts descargables en cada ejecución de GitHub Actions.
 
 ---
 
@@ -194,23 +221,23 @@ validate-compose → sast + backend + frontend → integration → dast
 | alumno2@iteso.mx | Alumno2123! | Alumno |
 | alumno3@iteso.mx | Alumno3123! | Alumno |
 
-## URLs
+## URLs de acceso
 
 | Servicio | URL | Credenciales |
 |---|---|---|
-| App | http://localhost:4200 | Ver tabla arriba |
-| Keycloak | http://localhost:8080 | admin / Admin123! |
-| MinIO | http://localhost:9001 | minioadmin / minioadmin123 |
+| App (dev) | http://localhost:4200 | Ver tabla arriba |
+| Keycloak Admin | http://localhost:8080 | admin / Admin123! |
+| MinIO Console | http://localhost:9001 | minioadmin / minioadmin123 |
 | Grafana | http://localhost:3001 | admin / admin123 |
 | Prometheus | http://localhost:9090 | — |
 | Mailpit | http://localhost:8025 | — |
 
-## Documentación incluida
+## Documentos del proyecto
 
 | Archivo | Contenido |
 |---|---|
-| `STRIDE-ITESO.md` | 30 amenazas con análisis local vs nube |
-| `REPORTE-SAST.md` | Resultados de tsc, ESLint, npm audit, Snyk |
-| `REPORTE-DAST.md` | Resultados OWASP ZAP con alertas y remediaciones |
-| `CORRECCIONES-SEGURIDAD.md` | 7 correcciones con código antes/después |
+| `STRIDE-ITESO.md` | 30 amenazas con análisis local vs nube + plan de mitigación |
+| `REPORTE-SAST.md` | Resultados reales: tsc, ESLint, npm audit, Snyk, cobertura |
+| `REPORTE-DAST.md` | Resultados reales OWASP ZAP 2.17.0: 0 High, 1 Medium, 1 Low |
+| `CORRECCIONES-SEGURIDAD.md` | 7 correcciones documentadas con código antes/después |
 | `PROYECTO-FINAL.md` | Este documento — resumen ejecutivo del proyecto |

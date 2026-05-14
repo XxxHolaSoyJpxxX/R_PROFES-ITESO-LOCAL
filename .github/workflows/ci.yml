@@ -110,14 +110,26 @@ jobs:
         working-directory: backend
         run: |
           echo "### ESLint Security scan ###"
-          npx eslint src/ --format stylish || true
+          npx eslint ./src --format stylish || true
           # warn no falla el pipeline; solo detect-eval-with-expression (error) lo haría
 
       # ── Snyk — SAST completo (requiere SNYK_TOKEN en secrets) ────────────
       - name: Snyk — instalar CLI
         run: npm install -g snyk
 
+      - name: Snyk — verificar token disponible
+        run: |
+          if [ -z "$SNYK_TOKEN" ]; then
+            echo "⚠️  SNYK_TOKEN no configurado — saltando análisis Snyk"
+            echo "   Configurar en: Settings → Secrets → SNYK_TOKEN"
+          else
+            echo "✓ SNYK_TOKEN disponible"
+          fi
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
       - name: Snyk Code — análisis backend
+        if: ${{ secrets.SNYK_TOKEN != '' }}
         working-directory: backend
         run: |
           echo "### Snyk Code SAST ###"
@@ -125,10 +137,9 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
-        # continue-on-error solo porque Snyk Code puede no estar habilitado
-        # en plan gratuito. Si está disponible, los resultados son reales.
 
       - name: Snyk Open Source — dependencias backend
+        if: ${{ secrets.SNYK_TOKEN != '' }}
         working-directory: backend
         run: |
           echo "### Snyk OSS backend ###"
@@ -138,6 +149,7 @@ jobs:
         continue-on-error: true
 
       - name: Snyk Open Source — dependencias frontend
+        if: ${{ secrets.SNYK_TOKEN != '' }}
         working-directory: frontend
         run: |
           echo "### Snyk OSS frontend ###"

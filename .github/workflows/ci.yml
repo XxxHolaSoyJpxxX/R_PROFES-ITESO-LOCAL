@@ -117,46 +117,41 @@ jobs:
       - name: Snyk — instalar CLI
         run: npm install -g snyk
 
-      - name: Snyk — verificar token disponible
+      - name: Snyk Code — análisis backend
+        working-directory: backend
         run: |
           if [ -z "$SNYK_TOKEN" ]; then
-            echo "⚠️  SNYK_TOKEN no configurado — saltando análisis Snyk"
-            echo "   Configurar en: Settings → Secrets → SNYK_TOKEN"
+            echo "⚠️  SNYK_TOKEN no configurado — saltando Snyk Code"
           else
-            echo "✓ SNYK_TOKEN disponible"
+            echo "### Snyk Code SAST ###"
+            snyk code test . --severity-threshold=high || true
           fi
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Snyk Code — análisis backend
-        if: ${{ secrets.SNYK_TOKEN != '' }}
-        working-directory: backend
-        run: |
-          echo "### Snyk Code SAST ###"
-          snyk code test . --severity-threshold=high
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
       - name: Snyk Open Source — dependencias backend
-        if: ${{ secrets.SNYK_TOKEN != '' }}
         working-directory: backend
         run: |
-          echo "### Snyk OSS backend ###"
-          snyk test --severity-threshold=high
+          if [ -z "$SNYK_TOKEN" ]; then
+            echo "⚠️  SNYK_TOKEN no configurado — saltando Snyk OSS backend"
+          else
+            echo "### Snyk OSS backend ###"
+            snyk test --severity-threshold=high || true
+          fi
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
 
       - name: Snyk Open Source — dependencias frontend
-        if: ${{ secrets.SNYK_TOKEN != '' }}
         working-directory: frontend
         run: |
-          echo "### Snyk OSS frontend ###"
-          snyk test --severity-threshold=high
+          if [ -z "$SNYK_TOKEN" ]; then
+            echo "⚠️  SNYK_TOKEN no configurado — saltando Snyk OSS frontend"
+          else
+            echo "### Snyk OSS frontend ###"
+            snyk test --severity-threshold=high || true
+          fi
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
 
       # ── Generar reportes ──────────────────────────────────────────────────
       - name: Generar reporte npm audit JSON

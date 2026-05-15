@@ -1,7 +1,8 @@
 # Proyecto Final — Seguridad en Cómputo en la Nube
 **Sistema:** ITESO Evaluación Docente (versión local con Docker)  
 **Repositorio:** https://github.com/XxxHolaSoyJpxxX/R_PROFES-ITESO-LOCAL  
-**Fecha:** Mayo 2026
+**Fecha:** Mayo 2026  
+**Integrantes:** Isaian Ayala | Juan Pablo Contreras | Paulina De Los Reyes
 
 ---
 
